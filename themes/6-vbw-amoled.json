@@ -159,6 +159,269 @@
       }
     }
   },
+  "light": {
+    "hue": {
+      "red": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "orange": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "yellow": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "green": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "cyan": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "blue": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "violet": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "pink": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      },
+      "gray": {
+        "100": "#111111",
+        "200": "#1a1a1a",
+        "300": "#333333",
+        "400": "#666666",
+        "500": "#8a8a8a",
+        "600": "#d8d8d8",
+        "700": "#ececec",
+        "800": "#ffffff",
+        "900": "#ffffff"
+      },
+      "neutral": "$hue.gray",
+      "accent": "$hue.gray",
+      "interactive": {
+        "100": "#685eff",
+        "200": "#685eff",
+        "300": "#685eff",
+        "400": "#685eff",
+        "500": "#685eff",
+        "600": "#685eff",
+        "700": "#685eff",
+        "800": "#685eff",
+        "900": "#685eff"
+      }
+    },
+    "categorical": [
+      "neutral",
+      "red",
+      "yellow",
+      "green",
+      "cyan",
+      "blue",
+      "violet"
+    ],
+    "text": {
+      "base": "#1a1a1a",
+      "muted": "#666666",
+      "action": {
+        "primary": {
+          "base": "#1a1a1a",
+          "$disabled": "#8a8a8a",
+          "$focused": "#685eff",
+          "$selected": "#685eff"
+        },
+        "secondary": {
+          "base": "#666666",
+          "$hovered": "#1a1a1a"
+        },
+        "destructive": {
+          "base": "#685eff",
+          "$disabled": "#8a8a8a"
+        }
+      },
+      "formfield": {
+        "base": "#1a1a1a",
+        "$hovered": "#685eff",
+        "$focused": "#685eff",
+        "$pressed": "#685eff",
+        "$disabled": "#8a8a8a",
+        "$selected": "#685eff"
+      },
+      "feedback": {
+        "error": {
+          "base": "#685eff"
+        },
+        "warning": {
+          "base": "#685eff"
+        },
+        "success": {
+          "base": "#00893e"
+        },
+        "info": {
+          "base": "#1a1a1a"
+        }
+      }
+    },
+    "background": {
+      "base": "#ffffff",
+      "raised": {
+        "base": "#f2f2f2",
+        "high": "#ececec",
+        "max": "#e3e3e3"
+      },
+      "action": {
+        "primary": {
+          "base": "transparent",
+          "$hovered": "#e3e3e3",
+          "$focused": "#685eff",
+          "$selected": "transparent"
+        },
+        "secondary": {
+          "base": "transparent"
+        },
+        "destructive": {
+          "base": "#685eff"
+        }
+      },
+      "formfield": {
+        "base": "#ffffff"
+      },
+      "feedback": {
+        "error": {
+          "base": "#ffffff"
+        },
+        "warning": {
+          "base": "#ffffff"
+        },
+        "success": {
+          "base": "#ffffff"
+        },
+        "info": {
+          "base": "#ffffff"
+        }
+      }
+    },
+    "border": {
+      "base": "#d0d0d0"
+    },
+    "scrollbar": {
+      "base": "#1a1a1a"
+    },
+    "diff": {
+      "text": {
+        "added": "#00893e",
+        "removed": "#685eff",
+        "context": "#1a1a1a",
+        "hunkHeader": "#685eff"
+      },
+      "background": {
+        "added": "#ccf7dc",
+        "removed": "#ffd2dc",
+        "context": "#ffffff"
+      },
+      "highlight": {
+        "added": "#00893e",
+        "removed": "#685eff"
+      },
+      "lineNumber": {
+        "text": "#666666",
+        "background": {
+          "added": "#ccf7dc",
+          "removed": "#ffd2dc"
+        }
+      }
+    },
+    "syntax": {
+      "comment": "#8a8a8a",
+      "keyword": "#685eff",
+      "function": "#1a1a1a",
+      "variable": "#666666",
+      "string": "#685eff",
+      "number": "#1a1a1a",
+      "type": "#685eff",
+      "operator": "#666666",
+      "punctuation": "#666666"
+    },
+    "markdown": {
+      "text": "#1a1a1a",
+      "heading": "#685eff",
+      "link": "#685eff",
+      "linkText": "#685eff",
+      "code": "#685eff",
+      "blockQuote": "#685eff",
+      "emphasis": "#685eff",
+      "strong": "#1a1a1a",
+      "horizontalRule": "#d0d0d0",
+      "listItem": "#685eff",
+      "listEnumeration": "#685eff",
+      "image": "#685eff",
+      "imageText": "#685eff",
+      "codeBlock": "#1a1a1a"
+    }
+  },
   "dark": {
     "hue": {
       "gray": {

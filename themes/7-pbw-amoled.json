@@ -159,6 +159,269 @@
       }
     }
   },
+  "light": {
+    "hue": {
+      "red": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "orange": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "yellow": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "green": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "cyan": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "blue": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "violet": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "pink": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      },
+      "gray": {
+        "100": "#111111",
+        "200": "#1a1a1a",
+        "300": "#333333",
+        "400": "#666666",
+        "500": "#8a8a8a",
+        "600": "#d8d8d8",
+        "700": "#ececec",
+        "800": "#ffffff",
+        "900": "#ffffff"
+      },
+      "neutral": "$hue.gray",
+      "accent": "$hue.gray",
+      "interactive": {
+        "100": "#d400cb",
+        "200": "#d400cb",
+        "300": "#d400cb",
+        "400": "#d400cb",
+        "500": "#d400cb",
+        "600": "#d400cb",
+        "700": "#d400cb",
+        "800": "#d400cb",
+        "900": "#d400cb"
+      }
+    },
+    "categorical": [
+      "neutral",
+      "red",
+      "yellow",
+      "green",
+      "cyan",
+      "blue",
+      "violet"
+    ],
+    "text": {
+      "base": "#1a1a1a",
+      "muted": "#666666",
+      "action": {
+        "primary": {
+          "base": "#1a1a1a",
+          "$disabled": "#8a8a8a",
+          "$focused": "#d400cb",
+          "$selected": "#d400cb"
+        },
+        "secondary": {
+          "base": "#666666",
+          "$hovered": "#1a1a1a"
+        },
+        "destructive": {
+          "base": "#d400cb",
+          "$disabled": "#8a8a8a"
+        }
+      },
+      "formfield": {
+        "base": "#1a1a1a",
+        "$hovered": "#d400cb",
+        "$focused": "#d400cb",
+        "$pressed": "#d400cb",
+        "$disabled": "#8a8a8a",
+        "$selected": "#d400cb"
+      },
+      "feedback": {
+        "error": {
+          "base": "#d400cb"
+        },
+        "warning": {
+          "base": "#d400cb"
+        },
+        "success": {
+          "base": "#00893e"
+        },
+        "info": {
+          "base": "#1a1a1a"
+        }
+      }
+    },
+    "background": {
+      "base": "#ffffff",
+      "raised": {
+        "base": "#f2f2f2",
+        "high": "#ececec",
+        "max": "#e3e3e3"
+      },
+      "action": {
+        "primary": {
+          "base": "transparent",
+          "$hovered": "#e3e3e3",
+          "$focused": "#d400cb",
+          "$selected": "transparent"
+        },
+        "secondary": {
+          "base": "transparent"
+        },
+        "destructive": {
+          "base": "#d400cb"
+        }
+      },
+      "formfield": {
+        "base": "#ffffff"
+      },
+      "feedback": {
+        "error": {
+          "base": "#ffffff"
+        },
+        "warning": {
+          "base": "#ffffff"
+        },
+        "success": {
+          "base": "#ffffff"
+        },
+        "info": {
+          "base": "#ffffff"
+        }
+      }
+    },
+    "border": {
+      "base": "#d0d0d0"
+    },
+    "scrollbar": {
+      "base": "#1a1a1a"
+    },
+    "diff": {
+      "text": {
+        "added": "#00893e",
+        "removed": "#d400cb",
+        "context": "#1a1a1a",
+        "hunkHeader": "#d400cb"
+      },
+      "background": {
+        "added": "#ccf7dc",
+        "removed": "#ffd2dc",
+        "context": "#ffffff"
+      },
+      "highlight": {
+        "added": "#00893e",
+        "removed": "#d400cb"
+      },
+      "lineNumber": {
+        "text": "#666666",
+        "background": {
+          "added": "#ccf7dc",
+          "removed": "#ffd2dc"
+        }
+      }
+    },
+    "syntax": {
+      "comment": "#8a8a8a",
+      "keyword": "#d400cb",
+      "function": "#1a1a1a",
+      "variable": "#666666",
+      "string": "#d400cb",
+      "number": "#1a1a1a",
+      "type": "#d400cb",
+      "operator": "#666666",
+      "punctuation": "#666666"
+    },
+    "markdown": {
+      "text": "#1a1a1a",
+      "heading": "#d400cb",
+      "link": "#d400cb",
+      "linkText": "#d400cb",
+      "code": "#d400cb",
+      "blockQuote": "#d400cb",
+      "emphasis": "#d400cb",
+      "strong": "#1a1a1a",
+      "horizontalRule": "#d0d0d0",
+      "listItem": "#d400cb",
+      "listEnumeration": "#d400cb",
+      "image": "#d400cb",
+      "imageText": "#d400cb",
+      "codeBlock": "#1a1a1a"
+    }
+  },
   "dark": {
     "hue": {
       "gray": {
