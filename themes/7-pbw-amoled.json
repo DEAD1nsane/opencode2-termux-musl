@@ -308,7 +308,7 @@
           "base": "#d400cb"
         },
         "success": {
-          "base": "#00893e"
+          "base": "#0EA5E9"
         },
         "info": {
           "base": "#1a1a1a"
@@ -363,18 +363,18 @@
     },
     "diff": {
       "text": {
-        "added": "#00a338",
+        "added": "#0EA5E9",
         "removed": "#d400cb",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#e6f7ea",
+        "added": "#e3f4fd",
         "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#00a338",
+        "added": "#0EA5E9",
         "removed": "#d400cb"
       },
       "lineNumber": {
