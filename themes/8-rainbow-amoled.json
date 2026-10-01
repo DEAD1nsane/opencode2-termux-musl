@@ -283,7 +283,7 @@
           "base": "#1a1a1a",
           "$disabled": "#8a8a8a",
           "$focused": "#ffffff",
-          "$selected": "#ee001c"
+          "$selected": "#ffffff"
         },
         "secondary": {
           "base": "#666666",
@@ -296,11 +296,11 @@
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#ee001c",
-        "$focused": "#ee001c",
-        "$pressed": "#ee001c",
+        "$hovered": "#ffffff",
+        "$focused": "#ffffff",
+        "$pressed": "#ffffff",
         "$disabled": "#8a8a8a",
-        "$selected": "#ee001c"
+        "$selected": "#ffffff"
       },
       "feedback": {
         "error": {
@@ -328,8 +328,8 @@
         "primary": {
           "base": "transparent",
           "$hovered": "#e3e3e3",
-          "$focused": "#ee001c",
-          "$selected": "transparent"
+          "$focused": "#0069b8",
+          "$selected": "#0069b8"
         },
         "secondary": {
           "base": "transparent"
@@ -339,7 +339,8 @@
         }
       },
       "formfield": {
-        "base": "#ffffff"
+        "base": "#ffffff",
+        "$focused": "#0069b8"
       },
       "feedback": {
         "error": {
@@ -364,25 +365,25 @@
     },
     "diff": {
       "text": {
-        "added": "#1a1a1a",
-        "removed": "#1a1a1a",
+        "added": "#00a338",
+        "removed": "#ee001c",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#59d68f",
-        "removed": "#ff9999",
+        "added": "#e6f7ea",
+        "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#1a1a1a",
-        "removed": "#1a1a1a"
+        "added": "#00a338",
+        "removed": "#ee001c"
       },
       "lineNumber": {
         "text": "#666666",
         "background": {
-          "added": "#59d68f",
-          "removed": "#ff9999"
+          "added": "#ffffff",
+          "removed": "#ffffff"
         }
       }
     },
@@ -392,7 +393,7 @@
       "function": "#0079d0",
       "variable": "#1a1a1a",
       "string": "#00a338",
-      "number": "#e06400",
+      "number": "#ff9500",
       "type": "#a53aff",
       "operator": "#666666",
       "punctuation": "#666666"

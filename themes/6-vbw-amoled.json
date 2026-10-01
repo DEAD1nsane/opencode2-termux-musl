@@ -262,17 +262,7 @@
       },
       "neutral": "$hue.gray",
       "accent": "$hue.gray",
-      "interactive": {
-        "100": "#685eff",
-        "200": "#685eff",
-        "300": "#685eff",
-        "400": "#685eff",
-        "500": "#685eff",
-        "600": "#685eff",
-        "700": "#685eff",
-        "800": "#685eff",
-        "900": "#685eff"
-      }
+      "interactive": "$hue.gray"
     },
     "categorical": [
       "neutral",
@@ -290,8 +280,8 @@
         "primary": {
           "base": "#1a1a1a",
           "$disabled": "#8a8a8a",
-          "$focused": "#685eff",
-          "$selected": "#685eff"
+          "$focused": "#ffffff",
+          "$selected": "#ffffff"
         },
         "secondary": {
           "base": "#666666",
@@ -304,11 +294,11 @@
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#685eff",
-        "$focused": "#685eff",
-        "$pressed": "#685eff",
+        "$hovered": "#ffffff",
+        "$focused": "#ffffff",
+        "$pressed": "#ffffff",
         "$disabled": "#8a8a8a",
-        "$selected": "#685eff"
+        "$selected": "#ffffff"
       },
       "feedback": {
         "error": {
@@ -347,7 +337,8 @@
         }
       },
       "formfield": {
-        "base": "#ffffff"
+        "base": "#ffffff",
+        "$focused": "#685eff"
       },
       "feedback": {
         "error": {
@@ -372,25 +363,25 @@
     },
     "diff": {
       "text": {
-        "added": "#00893e",
+        "added": "#00a338",
         "removed": "#685eff",
         "context": "#1a1a1a",
-        "hunkHeader": "#685eff"
+        "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#ccf7dc",
-        "removed": "#ffd2dc",
+        "added": "#e6f7ea",
+        "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#00893e",
+        "added": "#00a338",
         "removed": "#685eff"
       },
       "lineNumber": {
         "text": "#666666",
         "background": {
-          "added": "#ccf7dc",
-          "removed": "#ffd2dc"
+          "added": "#ffffff",
+          "removed": "#ffffff"
         }
       }
     },
