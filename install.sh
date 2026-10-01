@@ -176,6 +176,17 @@ else
   patchelf --set-interpreter "$MUSL_LOADER" "$V2_BIN"
 fi
 
+# Proxy watchdog: cron/runit are unavailable on Termux, so the wrapper keeps
+# this flock-single-instance daemon alive; it restarts proxy.py within a
+# minute if it dies. Remote MCP servers (e.g. railway) fail with "Unable to
+# connect" whenever the proxy is down at connect time. Installed outside the
+# binary-download guard so OPENCODE_WRAPPER_ONLY=1 refreshes deploy it too.
+if [ -f "$SCRIPT_DIR/scripts/proxy-watchdog.sh" ]; then
+  install -m 700 "$SCRIPT_DIR/scripts/proxy-watchdog.sh" "$PREFIX/libexec/opencode/proxy-watchdog.sh"
+elif [ -f "$SCRIPT_DIR/proxy-watchdog.sh" ]; then
+  install -m 700 "$SCRIPT_DIR/proxy-watchdog.sh" "$PREFIX/libexec/opencode/proxy-watchdog.sh"
+fi
+
 # --- Wrapper ---
 # v2 is Node.js-based. Outbound HTTPS still goes through the Python proxy on
 # 127.0.0.1:8080 because Node/c-ares bypasses libresolvefix (raw UDP DNS is
@@ -250,10 +261,21 @@ export https_proxy="http://127.0.0.1:8080"
 export NO_PROXY="localhost,127.0.0.1,::1"
 export no_proxy="localhost,127.0.0.1,::1"
 export NODE_OPTIONS="--dns-result-order=ipv4first"
-# Start the Python proxy if missing — v2 needs it for opencode.ai / MCP / models.dev
-if ! pgrep -f "proxy.py" >/dev/null 2>&1 && [ -f "@PREFIX@/libexec/opencode/proxy.py" ]; then
-  nohup python3 "@PREFIX@/libexec/opencode/proxy.py" >/dev/null 2>&1 &
-  sleep 0.3
+# Start the Python proxy if it isn't listening — v2 needs it for opencode.ai / MCP / models.dev.
+# Port check, not pgrep: `pgrep -f "proxy.py"` false-matches any cmdline that merely
+# mentions the string, so a dead proxy could look alive and remote MCP servers
+# (railway) would cache "Unable to connect" per directory.
+# PROXY_DEBUG=1 makes proxy.py log crashes to $TMPDIR/proxy.log instead of /dev/null.
+if [ -f "@PREFIX@/libexec/opencode/proxy.py" ]; then
+  if ! python3 -c 'import socket; s = socket.socket(); s.settimeout(1); s.connect(("127.0.0.1", 8080)); s.close()' 2>/dev/null; then
+    PROXY_DEBUG=1 nohup python3 "@PREFIX@/libexec/opencode/proxy.py" >/dev/null 2>&1 &
+    sleep 0.3
+  fi
+  # Keep the proxy watchdog alive. flock inside makes it single-instance,
+  # so launching it on every wrapper invocation is safe.
+  if [ -x "@PREFIX@/libexec/opencode/proxy-watchdog.sh" ]; then
+    nohup "@PREFIX@/libexec/opencode/proxy-watchdog.sh" >/dev/null 2>&1 &
+  fi
 fi
 STANDALONE=@STANDALONE@
 if [ "$OPENCODE_STANDALONE" = "1" ] || [ "$OPENCODE_STANDALONE" = "true" ]; then
