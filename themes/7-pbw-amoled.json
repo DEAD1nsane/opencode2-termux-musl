@@ -527,6 +527,29 @@
         "800": "#40013f",
         "900": "#220221"
       }
+    },
+    "diff": {
+      "text": {
+        "added": "#5AC8FA"
+      },
+      "highlight": {
+        "added": "#5AC8FA"
+      },
+      "background": {
+        "added": "#002031"
+      },
+      "lineNumber": {
+        "background": {
+          "added": "#002031"
+        }
+      }
+    },
+    "text": {
+      "feedback": {
+        "success": {
+          "base": "#5AC8FA"
+        }
+      }
     }
   }
 }
