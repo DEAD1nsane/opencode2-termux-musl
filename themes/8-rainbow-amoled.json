@@ -3,9 +3,9 @@
   "base": {
     "categorical": [
       "neutral",
-      "red",
       "orange",
       "yellow",
+      "red",
       "green",
       "cyan",
       "blue",
@@ -43,7 +43,7 @@
           "base": "#ff2740"
         },
         "warning": {
-          "base": "#ff2740"
+          "base": "$hue.yellow.200"
         },
         "success": {
           "base": "#25BE6A"
@@ -103,7 +103,7 @@
         "added": "#25BE6A",
         "removed": "#ff2740",
         "context": "#ffffff",
-        "hunkHeader": "#E75566"
+        "hunkHeader": "#b0b0b0"
       },
       "background": {
         "added": "#0F2418",
@@ -138,7 +138,7 @@
       "heading": "#ffffff",
       "link": "#FF6B00",
       "linkText": "#b0b0b0",
-      "code": "#FFFF4B",
+      "code": "$hue.red.200",
       "blockQuote": "#b0b0b0",
       "emphasis": "#ffffff",
       "strong": "#ffffff",
