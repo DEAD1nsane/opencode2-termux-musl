@@ -294,11 +294,11 @@
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#ffffff",
-        "$focused": "#ffffff",
-        "$pressed": "#ffffff",
+        "$hovered": "#0078d5",
+        "$focused": "#0078d5",
+        "$pressed": "#0078d5",
         "$disabled": "#8a8a8a",
-        "$selected": "#ffffff"
+        "$selected": "#0078d5"
       },
       "feedback": {
         "error": {
@@ -338,7 +338,7 @@
       },
       "formfield": {
         "base": "#ffffff",
-        "$focused": "#0078d5"
+        "$focused": "#ffffff"
       },
       "feedback": {
         "error": {

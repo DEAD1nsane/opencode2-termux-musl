@@ -162,92 +162,92 @@
   "light": {
     "hue": {
       "red": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "orange": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "yellow": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "green": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "cyan": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "blue": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "violet": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "pink": {
-        "100": "#c9c900",
-        "200": "#c9c900",
-        "300": "#c9c900",
-        "400": "#c9c900",
-        "500": "#c9c900",
-        "600": "#c9c900",
-        "700": "#c9c900",
-        "800": "#c9c900",
-        "900": "#c9c900"
+        "100": "#FFCC00",
+        "200": "#FFCC00",
+        "300": "#FFCC00",
+        "400": "#FFCC00",
+        "500": "#FFCC00",
+        "600": "#FFCC00",
+        "700": "#FFCC00",
+        "800": "#FFCC00",
+        "900": "#FFCC00"
       },
       "gray": {
         "100": "#111111",
@@ -288,24 +288,24 @@
           "$hovered": "#1a1a1a"
         },
         "destructive": {
-          "base": "#c9c900",
+          "base": "#FFCC00",
           "$disabled": "#8a8a8a"
         }
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#ffffff",
-        "$focused": "#ffffff",
-        "$pressed": "#ffffff",
+        "$hovered": "#FFCC00",
+        "$focused": "#FFCC00",
+        "$pressed": "#FFCC00",
         "$disabled": "#8a8a8a",
-        "$selected": "#ffffff"
+        "$selected": "#FFCC00"
       },
       "feedback": {
         "error": {
-          "base": "#c9c900"
+          "base": "#FFCC00"
         },
         "warning": {
-          "base": "#c9c900"
+          "base": "#FFCC00"
         },
         "success": {
           "base": "#00893e"
@@ -326,19 +326,19 @@
         "primary": {
           "base": "transparent",
           "$hovered": "#e3e3e3",
-          "$focused": "#c9c900",
+          "$focused": "#FFCC00",
           "$selected": "transparent"
         },
         "secondary": {
           "base": "transparent"
         },
         "destructive": {
-          "base": "#c9c900"
+          "base": "#FFCC00"
         }
       },
       "formfield": {
         "base": "#ffffff",
-        "$focused": "#c9c900"
+        "$focused": "#ffffff"
       },
       "feedback": {
         "error": {
@@ -364,7 +364,7 @@
     "diff": {
       "text": {
         "added": "#00a338",
-        "removed": "#c9c900",
+        "removed": "#FFCC00",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
@@ -375,7 +375,7 @@
       },
       "highlight": {
         "added": "#00a338",
-        "removed": "#c9c900"
+        "removed": "#FFCC00"
       },
       "lineNumber": {
         "text": "#666666",
@@ -387,29 +387,29 @@
     },
     "syntax": {
       "comment": "#8a8a8a",
-      "keyword": "#c9c900",
+      "keyword": "#FFCC00",
       "function": "#1a1a1a",
       "variable": "#666666",
-      "string": "#c9c900",
+      "string": "#FFCC00",
       "number": "#1a1a1a",
-      "type": "#c9c900",
+      "type": "#FFCC00",
       "operator": "#666666",
       "punctuation": "#666666"
     },
     "markdown": {
       "text": "#1a1a1a",
-      "heading": "#c9c900",
-      "link": "#c9c900",
-      "linkText": "#c9c900",
-      "code": "#c9c900",
-      "blockQuote": "#c9c900",
-      "emphasis": "#c9c900",
+      "heading": "#FFCC00",
+      "link": "#FFCC00",
+      "linkText": "#FFCC00",
+      "code": "#FFCC00",
+      "blockQuote": "#FFCC00",
+      "emphasis": "#FFCC00",
       "strong": "#1a1a1a",
       "horizontalRule": "#d0d0d0",
-      "listItem": "#c9c900",
-      "listEnumeration": "#c9c900",
-      "image": "#c9c900",
-      "imageText": "#c9c900",
+      "listItem": "#FFCC00",
+      "listEnumeration": "#FFCC00",
+      "image": "#FFCC00",
+      "imageText": "#FFCC00",
       "codeBlock": "#1a1a1a"
     }
   },
