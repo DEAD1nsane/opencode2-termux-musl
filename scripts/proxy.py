@@ -21,6 +21,7 @@ Supports three modes:
    raw TCP socket to the target, and pipes bytes both ways. Used
    by HTTP libraries for HTTPS targets when HTTP_PROXY is set.
 """
+
 import http.server
 import urllib.request
 import ssl
@@ -89,6 +90,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         target = self._absolute_target()
         if target and "127.0.0.1:8080" in target:
             from urllib.parse import urlparse
+
             parsed = urlparse(target)
             target = TARGET + parsed.path
             if parsed.query:
@@ -110,7 +112,10 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             return
 
         try:
+            # 30s connect timeout only; the tunnel itself must be blocking —
+            # a persisted timeout kills long-lived SSE inference streams.
             upstream = socket.create_connection((host, port), timeout=30)
+            upstream.settimeout(None)
         except Exception as e:
             self.send_response(502)
             self.send_header("Connection", "close")
@@ -135,7 +140,9 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         sockets = [client, upstream]
         try:
             while True:
-                readable, _, _ = select.select(sockets, [], [], 60)
+                # SSE streams can be silent >60s while the model thinks;
+                # 300s idle before tearing down a tunnel.
+                readable, _, _ = select.select(sockets, [], [], 300)
                 if not readable:
                     break
                 for s in readable:
@@ -170,7 +177,9 @@ class ThreadedHTTPServer(http.server.HTTPServer):
     """Handle each request in a thread so CONNECT tunnels don't block."""
 
     def process_request(self, request, client_address):
-        t = threading.Thread(target=self._process_request, args=(request, client_address), daemon=True)
+        t = threading.Thread(
+            target=self._process_request, args=(request, client_address), daemon=True
+        )
         t.start()
 
     def _process_request(self, request, client_address):
