@@ -2,7 +2,7 @@
 
 Run **OpenCode v2** on Termux (Android) as a native musl binary — installed as plain `opencode`, exactly like on every other platform.
 
-OpenCode v2 is the official stable line: Node.js runtime, ships via npm (`@opencode/cli`), GitHub tags stay v1.x. Upstream docs: [opencode.ai/v2](https://opencode.ai/v2/docs/).
+OpenCode v2 is the official stable line: Node.js runtime, ships via npm (`@opencode/cli`), with matching `v2.x` GitHub tags. Upstream docs: [opencode.ai/v2](https://opencode.ai/v2/docs/).
 
 This repo replaces [`opencode-termux-musl`](https://github.com/DEAD1nsane/opencode-termux-musl) (v1 + side-by-side era), which is now archived.
 
@@ -104,7 +104,7 @@ mkdir -p ~/.config/opencode/themes
 cp themes/*.json ~/.config/opencode/themes/
 ```
 
-Then pick one with `/themes` inside OpenCode. The seven accent themes are deliberately restrained — each leans on a single accent color for syntax highlighting on pure black; `8-rainbow-amoled` is the exception (white chrome, red links, full neon syntax). Previews: [opencode-termux-musl themes](https://github.com/DEAD1nsane/opencode-termux-musl/tree/master/docs/screenshots/themes).
+Then pick one with `/themes` inside OpenCode. The seven accent themes are deliberately restrained — each leans on a single accent color for syntax highlighting on pure black; `8-rainbow-amoled` is the exception (white chrome, red links, full neon syntax). Previews: [docs/screenshots/themes/](docs/screenshots/themes/).
 
 ## Formatter on Termux
 
@@ -154,3 +154,7 @@ sh scripts/remove-v1.sh       # deletes v1 binary + opencode2 leftovers (~350 MB
 - [guysoft/opencode-termux](https://github.com/guysoft/opencode-termux) — original Termux packaging ideas
 - [DEAD1nsane/opencode-termux-musl](https://github.com/DEAD1nsane/opencode-termux-musl) — v1 musl era + side-by-side v2 bring-up (archived)
 - [anomalyco/opencode](https://github.com/anomalyco/opencode) — OpenCode itself
+
+## License
+
+[MIT](LICENSE)
