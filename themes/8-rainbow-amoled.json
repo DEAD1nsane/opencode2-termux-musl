@@ -232,15 +232,15 @@
         "900": "#00819c"
       },
       "blue": {
-        "100": "#0079d0",
-        "200": "#0079d0",
-        "300": "#0079d0",
-        "400": "#0079d0",
-        "500": "#0079d0",
-        "600": "#0079d0",
-        "700": "#0079d0",
-        "800": "#0079d0",
-        "900": "#0079d0"
+        "100": "#1FA2FF",
+        "200": "#1FA2FF",
+        "300": "#1FA2FF",
+        "400": "#1FA2FF",
+        "500": "#1FA2FF",
+        "600": "#1FA2FF",
+        "700": "#1FA2FF",
+        "800": "#1FA2FF",
+        "900": "#1FA2FF"
       },
       "violet": {
         "100": "#a53aff",
@@ -282,8 +282,8 @@
         "primary": {
           "base": "#1a1a1a",
           "$disabled": "#8a8a8a",
-          "$focused": "#ffffff",
-          "$selected": "#ffffff"
+          "$focused": "#1a1a1a",
+          "$selected": "#1a1a1a"
         },
         "secondary": {
           "base": "#666666",
@@ -296,11 +296,11 @@
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#ffffff",
-        "$focused": "#ffffff",
-        "$pressed": "#ffffff",
+        "$hovered": "#1FA2FF",
+        "$focused": "#1FA2FF",
+        "$pressed": "#1FA2FF",
         "$disabled": "#8a8a8a",
-        "$selected": "#ffffff"
+        "$selected": "#1FA2FF"
       },
       "feedback": {
         "error": {
@@ -328,7 +328,7 @@
         "primary": {
           "base": "transparent",
           "$hovered": "#e3e3e3",
-          "$focused": "#0069b8",
+          "$focused": "#1FA2FF",
           "$selected": "#0069b8"
         },
         "secondary": {
@@ -340,7 +340,7 @@
       },
       "formfield": {
         "base": "#ffffff",
-        "$focused": "#0069b8"
+        "$focused": "#ffffff"
       },
       "feedback": {
         "error": {
