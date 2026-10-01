@@ -1,0 +1,24 @@
+name: Shell checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Check shell syntax
+        shell: bash
+        run: |
+          sh -n install.sh
+          for script in scripts/*.sh; do
+            sh -n "$script"
+          done
+      - name: Check python syntax
+        run: python3 -m py_compile scripts/proxy.py

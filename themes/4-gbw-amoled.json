@@ -1,0 +1,278 @@
+{
+  "$schema": "https://opencode.ai/theme.json",
+  "base": {
+    "categorical": [
+      "neutral",
+      "red",
+      "yellow",
+      "green",
+      "cyan",
+      "blue",
+      "violet"
+    ],
+    "text": {
+      "base": "$hue.neutral.200",
+      "muted": "$hue.neutral.400",
+      "action": {
+        "primary": {
+          "base": "$text.base",
+          "$disabled": "$hue.neutral.400",
+          "$focused": "#00FF7A",
+          "$selected": "$hue.interactive.200"
+        },
+        "secondary": {
+          "base": "$text.muted",
+          "$hovered": "$text.base"
+        },
+        "destructive": {
+          "base": "#00FF7A",
+          "$disabled": "$hue.neutral.400"
+        }
+      },
+      "formfield": {
+        "base": "$hue.neutral.200",
+        "$hovered": "$hue.interactive.200",
+        "$focused": "$hue.interactive.200",
+        "$pressed": "$hue.interactive.200",
+        "$disabled": "$hue.neutral.400",
+        "$selected": "$hue.interactive.200"
+      },
+      "feedback": {
+        "error": {
+          "base": "#00FF7A"
+        },
+        "warning": {
+          "base": "#00FF7A"
+        },
+        "success": {
+          "base": "#25BE6A"
+        },
+        "info": {
+          "base": "#ffffff"
+        }
+      }
+    },
+    "background": {
+      "base": "$hue.neutral.800",
+      "raised": {
+        "base": "$hue.neutral.700",
+        "high": "$hue.neutral.600",
+        "max": "$hue.neutral.500"
+      },
+      "action": {
+        "primary": {
+          "base": "transparent",
+          "$hovered": "$hue.neutral.700",
+          "$focused": "$hue.interactive.200",
+          "$selected": "transparent"
+        },
+        "secondary": {
+          "base": "transparent"
+        },
+        "destructive": {
+          "base": "#00FF7A"
+        }
+      },
+      "formfield": {
+        "base": "$background.base"
+      },
+      "feedback": {
+        "error": {
+          "base": "$background.base"
+        },
+        "warning": {
+          "base": "$background.base"
+        },
+        "success": {
+          "base": "$background.base"
+        },
+        "info": {
+          "base": "$background.base"
+        }
+      }
+    },
+    "border": {
+      "base": "#181818"
+    },
+    "scrollbar": {
+      "base": "$hue.neutral.200"
+    },
+    "diff": {
+      "text": {
+        "added": "#25BE6A",
+        "removed": "#00FF7A",
+        "context": "#ffffff",
+        "hunkHeader": "#00FF7A"
+      },
+      "background": {
+        "added": "#0F2418",
+        "removed": "#2A1216",
+        "context": "$hue.neutral.800"
+      },
+      "highlight": {
+        "added": "#25BE6A",
+        "removed": "#00FF7A"
+      },
+      "lineNumber": {
+        "text": "#ffffff",
+        "background": {
+          "added": "#0F2418",
+          "removed": "#2A1216"
+        }
+      }
+    },
+    "syntax": {
+      "comment": "#b0b0b0",
+      "keyword": "#00FF7A",
+      "function": "#ffffff",
+      "variable": "#b0b0b0",
+      "string": "#00FF7A",
+      "number": "#ffffff",
+      "type": "#00FF7A",
+      "operator": "#b0b0b0",
+      "punctuation": "#b0b0b0"
+    },
+    "markdown": {
+      "text": "#ffffff",
+      "heading": "#00FF7A",
+      "link": "#00FF7A",
+      "linkText": "#00FF7A",
+      "code": "#00FF7A",
+      "blockQuote": "#00FF7A",
+      "emphasis": "#00FF7A",
+      "strong": "#ffffff",
+      "horizontalRule": "#181818",
+      "listItem": "#00FF7A",
+      "listEnumeration": "#00FF7A",
+      "image": "#00FF7A",
+      "imageText": "#00FF7A",
+      "codeBlock": "#ffffff"
+    },
+    "@dialog": {
+      "background": {
+        "base": "$background.raised.base",
+        "action": {
+          "primary": {
+            "$hovered": "$background.raised.high"
+          }
+        }
+      }
+    }
+  },
+  "dark": {
+    "hue": {
+      "gray": {
+        "100": "#ffffff",
+        "200": "#ffffff",
+        "300": "#d7d7d7",
+        "400": "#b0b0b0",
+        "500": "#5a5a5a",
+        "600": "#111111",
+        "700": "#000000",
+        "800": "#000000",
+        "900": "#000000"
+      },
+      "neutral": "$hue.gray",
+      "accent": "$hue.gray",
+      "interactive": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "red": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "orange": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "yellow": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "green": {
+        "100": "#37d97c",
+        "200": "#25BE6A",
+        "300": "#0ea458",
+        "400": "#1d894c",
+        "500": "#06713b",
+        "600": "#0a582e",
+        "700": "#064120",
+        "800": "#012b13",
+        "900": "#001707"
+      },
+      "cyan": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "blue": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "violet": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      },
+      "pink": {
+        "100": "#e5fee9",
+        "200": "#00FF7A",
+        "300": "#2cd86d",
+        "400": "#02b555",
+        "500": "#139145",
+        "600": "#0f7034",
+        "700": "#045023",
+        "800": "#033214",
+        "900": "#011706"
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+__pycache__/
+# Machine-local: symlinked to ~/.git-template/AGENTS.md, never committed.
+AGENTS.md
