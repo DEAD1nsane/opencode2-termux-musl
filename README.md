@@ -104,7 +104,18 @@ mkdir -p ~/.config/opencode/themes
 cp themes/*.json ~/.config/opencode/themes/
 ```
 
-Then pick one with `/themes` inside OpenCode. The seven accent themes are deliberately restrained — each leans on a single accent color for syntax highlighting on pure black; `8-rainbow-amoled` is the exception (white chrome, red links, full neon syntax). Previews: [docs/screenshots/themes/](docs/screenshots/themes/).
+Then pick one with `/themes` inside OpenCode. The seven accent themes are deliberately restrained — each leans on a single accent color for syntax highlighting on pure black; `8-rainbow-amoled` is the exception (white chrome, red links, full neon syntax).
+
+| # | Theme | Accent | Preview |
+|---|---|---|---|
+| 1 | [`1-rbw-amoled`](themes/1-rbw-amoled.json) | Red `#ff2740` | <img src="docs/screenshots/themes/1-rbw-amoled.png" width="300" alt="1-rbw-amoled theme preview"> |
+| 2 | [`2-obw-amoled`](themes/2-obw-amoled.json) | Orange `#FF914A` | <img src="docs/screenshots/themes/2-obw-amoled.png" width="300" alt="2-obw-amoled theme preview"> |
+| 3 | [`3-ybw-amoled`](themes/3-ybw-amoled.json) | Yellow `#FFFF4B` | <img src="docs/screenshots/themes/3-ybw-amoled.png" width="300" alt="3-ybw-amoled theme preview"> |
+| 4 | [`4-gbw-amoled`](themes/4-gbw-amoled.json) | Green `#00FF7A` | <img src="docs/screenshots/themes/4-gbw-amoled.png" width="300" alt="4-gbw-amoled theme preview"> |
+| 5 | [`5-bbw-amoled`](themes/5-bbw-amoled.json) | Blue `#0090FF` | <img src="docs/screenshots/themes/5-bbw-amoled.png" width="300" alt="5-bbw-amoled theme preview"> |
+| 6 | [`6-vbw-amoled`](themes/6-vbw-amoled.json) | Violet `#6F66FF` | <img src="docs/screenshots/themes/6-vbw-amoled.png" width="300" alt="6-vbw-amoled theme preview"> |
+| 7 | [`7-pbw-amoled`](themes/7-pbw-amoled.json) | Pink `#FF60F8` | <img src="docs/screenshots/themes/7-pbw-amoled.png" width="300" alt="7-pbw-amoled theme preview"> |
+| 8 | [`8-rainbow-amoled`](themes/8-rainbow-amoled.json) | Full neon (multi) | <img src="docs/screenshots/themes/8-rainbow-amoled.png" width="300" alt="8-rainbow-amoled theme preview"> |
 
 ## Formatter on Termux
 
