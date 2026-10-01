@@ -294,11 +294,11 @@
       },
       "formfield": {
         "base": "#1a1a1a",
-        "$hovered": "#FFCC00",
-        "$focused": "#FFCC00",
-        "$pressed": "#FFCC00",
+        "$hovered": "#1a1a1a",
+        "$focused": "#1a1a1a",
+        "$pressed": "#1a1a1a",
         "$disabled": "#8a8a8a",
-        "$selected": "#FFCC00"
+        "$selected": "#1a1a1a"
       },
       "feedback": {
         "error": {
