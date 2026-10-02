@@ -342,9 +342,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#e5edf3",
-        "high": "#d8e5ee",
-        "max": "#c4d9e7"
+        "base": "#f2f2f2",
+        "high": "#ececec",
+        "max": "#e3e3e3"
       },
       "action": {
         "primary": {
@@ -607,12 +607,7 @@
       },
       "added": "#0F2418",
       "removed": "#2A1216",
-      "context": "#000000",
-      "raised": {
-        "base": "#040e14",
-        "high": "#15242e",
-        "max": "#506f83"
-      }
+      "context": "#000000"
     },
     "highlight": {
       "added": "#25BE6A",
