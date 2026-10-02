@@ -308,7 +308,7 @@
           "base": "#685eff"
         },
         "success": {
-          "base": "#FFCC00"
+          "base": "#F0BF00"
         },
         "info": {
           "base": "#1a1a1a"
@@ -363,7 +363,7 @@
     },
     "diff": {
       "text": {
-        "added": "#FFCC00",
+        "added": "#F0BF00",
         "removed": "#685eff",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
@@ -374,7 +374,7 @@
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#FFCC00",
+        "added": "#F0BF00",
         "removed": "#685eff"
       },
       "lineNumber": {
