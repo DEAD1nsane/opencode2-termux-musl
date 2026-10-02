@@ -556,6 +556,13 @@
           "$selected": "#1a1a1a"
         }
       }
+    },
+    "background": {
+      "action": {
+        "primary": {
+          "$focused": "#8F88FF"
+        }
+      }
     }
   }
 }
