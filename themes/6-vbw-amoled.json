@@ -308,7 +308,7 @@
           "base": "#685eff"
         },
         "success": {
-          "base": "#00893e"
+          "base": "#FFCC00"
         },
         "info": {
           "base": "#1a1a1a"
@@ -363,18 +363,18 @@
     },
     "diff": {
       "text": {
-        "added": "#00a338",
+        "added": "#FFCC00",
         "removed": "#685eff",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#e6f7ea",
+        "added": "#fdf3d7",
         "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#00a338",
+        "added": "#FFCC00",
         "removed": "#685eff"
       },
       "lineNumber": {
@@ -526,6 +526,29 @@
         "700": "#261a71",
         "800": "#1a0b58",
         "900": "#0e033b"
+      }
+    },
+    "diff": {
+      "text": {
+        "added": "#FFFF4B"
+      },
+      "highlight": {
+        "added": "#FFFF4B"
+      },
+      "background": {
+        "added": "#242100"
+      },
+      "lineNumber": {
+        "background": {
+          "added": "#242100"
+        }
+      }
+    },
+    "text": {
+      "feedback": {
+        "success": {
+          "base": "#FFFF4B"
+        }
       }
     }
   }
