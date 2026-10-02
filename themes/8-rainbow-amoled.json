@@ -397,13 +397,13 @@
     },
     "syntax": {
       "comment": "#8a8a8a",
-      "keyword": "#ff1493",
-      "function": "#0a84ff",
+      "keyword": "#ff2d95",
+      "function": "#0099ff",
       "variable": "#1a1a1a",
-      "string": "#00c853",
-      "number": "#ff6d00",
-      "type": "#a53aff",
-      "operator": "#00b8d4",
+      "string": "#00e676",
+      "number": "#ffb300",
+      "type": "#bf5af2",
+      "operator": "#00e5ff",
       "punctuation": "#666666"
     },
     "markdown": {
