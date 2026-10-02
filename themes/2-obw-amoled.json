@@ -530,10 +530,10 @@
     },
     "diff": {
       "text": {
-        "added": "#1FA2FF"
+        "added": "#33ADFF"
       },
       "highlight": {
-        "added": "#1FA2FF"
+        "added": "#33ADFF"
       },
       "background": {
         "added": "#001a33"
@@ -547,7 +547,7 @@
     "text": {
       "feedback": {
         "success": {
-          "base": "#1FA2FF"
+          "base": "#33ADFF"
         }
       }
     }
