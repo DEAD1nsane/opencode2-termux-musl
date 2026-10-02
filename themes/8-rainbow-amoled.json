@@ -315,7 +315,11 @@
         "info": {
           "base": "#0079d0"
         }
-      }
+      },
+      "added": "#00a338",
+      "removed": "#ee001c",
+      "context": "#1a1a1a",
+      "hunkHeader": "#8a8a8a"
     },
     "background": {
       "base": "#ffffff",
@@ -355,7 +359,10 @@
         "info": {
           "base": "#ffffff"
         }
-      }
+      },
+      "added": "#e6f7ea",
+      "removed": "#fdeaea",
+      "context": "#ffffff"
     },
     "border": {
       "base": "#d0d0d0"
@@ -413,6 +420,17 @@
       "image": "#1a1a1a",
       "imageText": "#666666",
       "codeBlock": "#1a1a1a"
+    },
+    "highlight": {
+      "added": "#00a338",
+      "removed": "#ee001c"
+    },
+    "lineNumber": {
+      "text": "#666666",
+      "background": {
+        "added": "#ffffff",
+        "removed": "#ffffff"
+      }
     }
   },
   "dark": {
@@ -525,13 +543,31 @@
         "primary": {
           "$selected": "#0b6bb8"
         }
-      }
+      },
+      "added": "#0F2418",
+      "removed": "#2A1216",
+      "context": "#000000"
     },
     "text": {
       "action": {
         "primary": {
           "$selected": "#ffffff"
         }
+      },
+      "added": "#25BE6A",
+      "removed": "#ff2740",
+      "context": "#ffffff",
+      "hunkHeader": "#b0b0b0"
+    },
+    "highlight": {
+      "added": "#25BE6A",
+      "removed": "#ff2740"
+    },
+    "lineNumber": {
+      "text": "#ffffff",
+      "background": {
+        "added": "#0F2418",
+        "removed": "#2A1216"
       }
     }
   }
