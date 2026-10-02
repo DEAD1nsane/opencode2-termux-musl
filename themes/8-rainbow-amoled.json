@@ -324,9 +324,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#f2f2f2",
-        "high": "#ececec",
-        "max": "#e3e3e3"
+        "base": "#f2e3e5",
+        "high": "#ecd4d7",
+        "max": "#e5bfc3"
       },
       "action": {
         "primary": {
@@ -546,7 +546,12 @@
       },
       "added": "#0F2418",
       "removed": "#2A1216",
-      "context": "#000000"
+      "context": "#000000",
+      "raised": {
+        "base": "#140305",
+        "high": "#2e1417",
+        "max": "#834d54"
+      }
     },
     "text": {
       "action": {

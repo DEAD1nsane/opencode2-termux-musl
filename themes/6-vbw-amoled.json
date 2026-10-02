@@ -342,9 +342,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#f2f2f2",
-        "high": "#ececec",
-        "max": "#e3e3e3"
+        "base": "#f2efe3",
+        "high": "#ece8d4",
+        "max": "#e5ddbf"
       },
       "action": {
         "primary": {
@@ -428,7 +428,7 @@
       "heading": "#685eff",
       "link": "#685eff",
       "linkText": "#685eff",
-      "code": "#685eff",
+      "code": "#F0BF00",
       "blockQuote": "#685eff",
       "emphasis": "#685eff",
       "strong": "#1a1a1a",
@@ -608,7 +608,12 @@
       },
       "added": "#0F2418",
       "removed": "#2A1216",
-      "context": "#000000"
+      "context": "#000000",
+      "raised": {
+        "base": "#141406",
+        "high": "#2e2e18",
+        "max": "#838356"
+      }
     },
     "highlight": {
       "added": "#25BE6A",
@@ -620,6 +625,9 @@
         "added": "#0F2418",
         "removed": "#2A1216"
       }
+    },
+    "markdown": {
+      "code": "#FFFF4B"
     }
   }
 }

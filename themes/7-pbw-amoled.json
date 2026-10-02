@@ -342,9 +342,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#f2f2f2",
-        "high": "#ececec",
-        "max": "#e3e3e3"
+        "base": "#e4edf1",
+        "high": "#d6e5ec",
+        "max": "#c1d9e4"
       },
       "action": {
         "primary": {
@@ -428,7 +428,7 @@
       "heading": "#d400cb",
       "link": "#d400cb",
       "linkText": "#d400cb",
-      "code": "#d400cb",
+      "code": "#0EA5E9",
       "blockQuote": "#d400cb",
       "emphasis": "#d400cb",
       "strong": "#1a1a1a",
@@ -607,7 +607,12 @@
       },
       "added": "#0F2418",
       "removed": "#2A1216",
-      "context": "#000000"
+      "context": "#000000",
+      "raised": {
+        "base": "#071014",
+        "high": "#1a272d",
+        "max": "#5a7682"
+      }
     },
     "highlight": {
       "added": "#25BE6A",
@@ -619,6 +624,9 @@
         "added": "#0F2418",
         "removed": "#2A1216"
       }
+    },
+    "markdown": {
+      "code": "#5AC8FA"
     }
   }
 }
