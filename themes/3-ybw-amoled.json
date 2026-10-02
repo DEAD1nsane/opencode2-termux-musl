@@ -347,7 +347,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#F0BF00",
-          "$selected": "transparent"
+          "$selected": "#F0BF00"
         },
         "secondary": {
           "base": "transparent"
@@ -573,7 +573,18 @@
       "action": {
         "primary": {
           "$focused": "#1a1a1a",
-          "$selected": "#1a1a1a"
+          "$selected": "#ffffff"
+        }
+      }
+    },
+    "background": {
+      "raised": {
+        "base": "#161616",
+        "high": "#262626"
+      },
+      "action": {
+        "primary": {
+          "$selected": "#655000"
         }
       }
     }

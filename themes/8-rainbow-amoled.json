@@ -329,7 +329,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#1FA2FF",
-          "$selected": "#0069b8"
+          "$selected": "#1FA2FF"
         },
         "secondary": {
           "base": "transparent"
@@ -518,6 +518,24 @@
         "700": "#60012e",
         "800": "#41051e",
         "900": "#28000f"
+      }
+    },
+    "background": {
+      "raised": {
+        "base": "#161616",
+        "high": "#262626"
+      },
+      "action": {
+        "primary": {
+          "$selected": "#0b6bb8"
+        }
+      }
+    },
+    "text": {
+      "action": {
+        "primary": {
+          "$selected": "#ffffff"
+        }
       }
     }
   }

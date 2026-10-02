@@ -300,8 +300,8 @@
         "primary": {
           "base": "#1a1a1a",
           "$disabled": "#8a8a8a",
-          "$focused": "#ffffff",
-          "$selected": "#ffffff"
+          "$focused": "#1a1a1a",
+          "$selected": "#1a1a1a"
         },
         "secondary": {
           "base": "#666666",
@@ -347,7 +347,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#0078d5",
-          "$selected": "transparent"
+          "$selected": "#0078d5"
         },
         "secondary": {
           "base": "transparent"
@@ -573,7 +573,18 @@
       "action": {
         "primary": {
           "$focused": "#1a1a1a",
-          "$selected": "#1a1a1a"
+          "$selected": "#ffffff"
+        }
+      }
+    },
+    "background": {
+      "raised": {
+        "base": "#161616",
+        "high": "#262626"
+      },
+      "action": {
+        "primary": {
+          "$selected": "#003259"
         }
       }
     }
