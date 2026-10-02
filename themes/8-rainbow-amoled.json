@@ -320,9 +320,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#e7eef3",
-        "high": "#e2e8ed",
-        "max": "#d9e0e4"
+        "base": "#f2f2f2",
+        "high": "#ececec",
+        "max": "#e3e3e3"
       },
       "action": {
         "primary": {
@@ -521,11 +521,6 @@
       }
     },
     "background": {
-      "raised": {
-        "base": "#172129",
-        "high": "#253037",
-        "max": "#556067"
-      },
       "action": {
         "primary": {
           "$selected": "#0b6bb8"
