@@ -261,8 +261,28 @@
         "900": "#ffffff"
       },
       "neutral": "$hue.gray",
-      "accent": "$hue.gray",
-      "interactive": "$hue.gray"
+      "accent": {
+        "100": "#F0BF00",
+        "200": "#F0BF00",
+        "300": "#F0BF00",
+        "400": "#F0BF00",
+        "500": "#F0BF00",
+        "600": "#F0BF00",
+        "700": "#F0BF00",
+        "800": "#F0BF00",
+        "900": "#F0BF00"
+      },
+      "interactive": {
+        "100": "#F0BF00",
+        "200": "#F0BF00",
+        "300": "#F0BF00",
+        "400": "#F0BF00",
+        "500": "#F0BF00",
+        "600": "#F0BF00",
+        "700": "#F0BF00",
+        "800": "#F0BF00",
+        "900": "#F0BF00"
+      }
     },
     "categorical": [
       "neutral",
@@ -427,7 +447,7 @@
         "900": "#000000"
       },
       "neutral": "$hue.gray",
-      "accent": "$hue.gray",
+      "accent": "$hue.interactive",
       "interactive": {
         "100": "#ffffff",
         "200": "#FFFF4B",
