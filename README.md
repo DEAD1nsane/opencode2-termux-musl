@@ -131,21 +131,24 @@ This installs prettier globally via Termux npm and points opencode at `node <pre
 
 ## Updating
 
-```sh
-./scripts/check-update.sh          # check (exit 2 + notification if behind)
-./scripts/check-update.sh --yes    # check + re-run install.sh if behind
-./scripts/auto-update.sh           # same as check-update.sh --yes (job entrypoint)
-```
-
-v2 updates come from the npm channel only; the script compares against `opencode.ai/update/api/latest/cli/npm` and never downgrades.
-
-Daily unattended auto-update (needs the Termux:API app — Wi-Fi only, survives reboot):
+Updates are unattended: schedule the daily job once and forget it.
 
 ```sh
 termux-job-scheduler --job-id 7802 --period-ms 86400000 \
   --network unmetered --persisted true \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
+
+The job (needs the Termux:API app — Wi-Fi only, survives reboot) checks the npm channel and re-runs `install.sh` only when behind; it never downgrades. You get a notification on success or failure, nothing to do manually.
+
+Manual options, if you ever need them:
+
+```sh
+./scripts/check-update.sh          # check only (exit 2 + notification if behind)
+./scripts/check-update.sh --yes    # check + re-run install.sh if behind
+```
+
+v2 updates come from the npm channel only; the script compares against `opencode.ai/update/api/latest/cli/npm`.
 
 Migrating the v1-era job (7801/7802 pointed at the archived `opencode-termux-musl` repo): reschedule the same job id with the path above — the v1 script compares against v1 GitHub tags and silently exits "nothing to do" once `opencode` reports 2.x.
 

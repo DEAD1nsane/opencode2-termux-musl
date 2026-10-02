@@ -69,13 +69,7 @@ Installs global prettier and rewrites the `formatter` key of `~/.config/opencode
 
 ## Updating
 
-```sh
-./scripts/check-update.sh          # check only
-./scripts/check-update.sh --yes    # apply via install.sh
-./scripts/auto-update.sh           # unattended entrypoint (check-update.sh --yes)
-```
-
-Daily unattended auto-update (Termux:API):
+Unattended daily auto-update (Termux:API — schedule once, applies updates on its own):
 
 ```sh
 termux-job-scheduler --job-id 7802 --period-ms 86400000 \
@@ -83,7 +77,16 @@ termux-job-scheduler --job-id 7802 --period-ms 86400000 \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
 
-To be notified but not auto-apply, point the job at `scripts/check-update.sh` instead. If a v1-era job (7801/7802) still points at the archived `opencode-termux-musl` repo, reschedule it with the path above — the v1 script checks the v1 GitHub tag channel and exits "nothing to do" forever once `opencode` reports 2.x.
+The job checks the npm channel and re-runs `install.sh` only when behind; never downgrades. Notifications fire on success or failure — no manual step.
+
+Manual options:
+
+```sh
+./scripts/check-update.sh          # check only
+./scripts/check-update.sh --yes    # apply via install.sh
+```
+
+If a v1-era job (7801/7802) still points at the archived `opencode-termux-musl` repo, reschedule it with the path above — the v1 script checks the v1 GitHub tag channel and exits "nothing to do" forever once `opencode` reports 2.x. When the auto-update job is _not_ scheduled, `check-update.sh` says so explicitly instead of nudging a manual install.sh run.
 
 ## Troubleshooting
 

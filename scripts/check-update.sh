@@ -7,18 +7,20 @@
 # re-runs install.sh when behind.
 #
 # Usage:
+#   ./scripts/auto-update.sh           # unattended entrypoint (this + --yes)
 #   ./scripts/check-update.sh          # check only, notify if behind (exit 2)
 #   ./scripts/check-update.sh --yes    # check + re-run install.sh if behind
 #
 # Exit codes: 0 = up to date, 1 = error, 2 = update available.
 #
-# Unattended daily check (needs the Termux:API app) — notify only:
+# Unattended daily auto-update (check + apply; needs the Termux:API app):
 #   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
 #     --network unmetered --persisted true \
-#     -s /path/to/opencode2-termux-musl/scripts/check-update.sh
+#     -s /path/to/opencode2-termux-musl/scripts/auto-update.sh
 #
-# Unattended daily auto-update (check + apply): point the job at
-# scripts/auto-update.sh instead, which execs this script with --yes.
+# The check-only notification adapts to whether that job is scheduled:
+# if it is, the notification says the update is applied automatically;
+# if not, it points at auto-update.sh — never at a manual install.sh run.
 #
 # Requires: curl.
 
@@ -68,7 +70,26 @@ if [ "$oldest" = "$latest" ]; then
   exit 0
 fi
 
-echo "Update available: installed $installed, latest $latest."
+# Does the unattended auto-update job exist? The check-only notification
+# must not send people to manually re-run install.sh — with the job
+# scheduled, updates apply on their own; without it, the only instruction
+# should be to schedule auto-update.sh (the docs' step 1).
+auto_job_scheduled=0
+if command -v termux-job-scheduler >/dev/null 2>&1 \
+  && termux-job-scheduler -p 2>/dev/null | grep -q "auto-update\.sh"; then
+  auto_job_scheduled=1
+fi
+
+if [ "$APPLY" -eq 0 ]; then
+  if [ "$auto_job_scheduled" -eq 1 ]; then
+    echo "Update available: installed $installed, latest $latest (daily job applies it)."
+  else
+    echo "Update available: installed $installed, latest $latest."
+    echo "No auto-update job scheduled — run: scripts/auto-update.sh (see docs/INSTALL.md)."
+  fi
+else
+  echo "Update available: installed $installed, latest $latest."
+fi
 
 if [ "$APPLY" -eq 1 ]; then
   notify "opencode $installed -> $latest available. Auto-updating..."
@@ -89,7 +110,9 @@ if [ "$APPLY" -eq 1 ]; then
   fi
 fi
 
-# With auto-update.sh running unattended (job 7802), this notification
-# only needs to inform — no manual step to nag about.
-notify "opencode $installed -> $latest available."
+if [ "$auto_job_scheduled" -eq 1 ]; then
+  notify "opencode $installed -> $latest available. Applied automatically by the daily job."
+else
+  notify "opencode $installed -> $latest available. Schedule scripts/auto-update.sh for unattended updates (see docs/INSTALL.md)."
+fi
 exit 2
