@@ -338,9 +338,9 @@
     "background": {
       "base": "#ffffff",
       "raised": {
-        "base": "#f2f2f2",
-        "high": "#ececec",
-        "max": "#e3e3e3"
+        "base": "#ebebf3",
+        "high": "#e5e5ed",
+        "max": "#dddce4"
       },
       "action": {
         "primary": {
@@ -585,8 +585,9 @@
         }
       },
       "raised": {
-        "base": "#161616",
-        "high": "#262626"
+        "base": "#1d1c29",
+        "high": "#2c2b37",
+        "max": "#5c5b67"
       }
     }
   }
