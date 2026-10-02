@@ -17,7 +17,7 @@
         "primary": {
           "base": "$text.base",
           "$disabled": "$hue.neutral.400",
-          "$focused": "#6F66FF",
+          "$focused": "#8B85FF",
           "$selected": "$hue.interactive.200"
         },
         "secondary": {
@@ -25,7 +25,7 @@
           "$hovered": "$text.base"
         },
         "destructive": {
-          "base": "#6F66FF",
+          "base": "#8B85FF",
           "$disabled": "$hue.neutral.400"
         }
       },
@@ -39,10 +39,10 @@
       },
       "feedback": {
         "error": {
-          "base": "#6F66FF"
+          "base": "#8B85FF"
         },
         "warning": {
-          "base": "#6F66FF"
+          "base": "#8B85FF"
         },
         "success": {
           "base": "#25BE6A"
@@ -70,7 +70,7 @@
           "base": "transparent"
         },
         "destructive": {
-          "base": "#6F66FF"
+          "base": "#8B85FF"
         }
       },
       "formfield": {
@@ -100,18 +100,18 @@
     "diff": {
       "text": {
         "added": "#25BE6A",
-        "removed": "#6F66FF",
+        "removed": "#ff2740",
         "context": "#ffffff",
-        "hunkHeader": "#6F66FF"
+        "hunkHeader": "#b0b0b0"
       },
       "background": {
         "added": "#0F2418",
         "removed": "#2A1216",
-        "context": "$hue.neutral.800"
+        "context": "#000000"
       },
       "highlight": {
         "added": "#25BE6A",
-        "removed": "#6F66FF"
+        "removed": "#ff2740"
       },
       "lineNumber": {
         "text": "#ffffff",
@@ -123,29 +123,29 @@
     },
     "syntax": {
       "comment": "#b0b0b0",
-      "keyword": "#6F66FF",
+      "keyword": "#8B85FF",
       "function": "#ffffff",
       "variable": "#b0b0b0",
-      "string": "#6F66FF",
+      "string": "#8B85FF",
       "number": "#ffffff",
-      "type": "#6F66FF",
+      "type": "#8B85FF",
       "operator": "#b0b0b0",
       "punctuation": "#b0b0b0"
     },
     "markdown": {
       "text": "#ffffff",
-      "heading": "#6F66FF",
-      "link": "#6F66FF",
-      "linkText": "#6F66FF",
-      "code": "#6F66FF",
-      "blockQuote": "#6F66FF",
-      "emphasis": "#6F66FF",
+      "heading": "#8B85FF",
+      "link": "#8B85FF",
+      "linkText": "#8B85FF",
+      "code": "#F6FF66",
+      "blockQuote": "#8B85FF",
+      "emphasis": "#8B85FF",
       "strong": "#ffffff",
       "horizontalRule": "#181818",
-      "listItem": "#6F66FF",
-      "listEnumeration": "#6F66FF",
-      "image": "#6F66FF",
-      "imageText": "#6F66FF",
+      "listItem": "#8B85FF",
+      "listEnumeration": "#8B85FF",
+      "image": "#8B85FF",
+      "imageText": "#8B85FF",
       "codeBlock": "#ffffff"
     },
     "@dialog": {
@@ -322,10 +322,10 @@
       },
       "feedback": {
         "error": {
-          "base": "#685eff"
+          "base": "#7A72FF"
         },
         "warning": {
-          "base": "#685eff"
+          "base": "#7A72FF"
         },
         "success": {
           "base": "#F0BF00"
@@ -351,7 +351,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#685eff",
-          "$selected": "#685eff"
+          "$selected": "transparent"
         },
         "secondary": {
           "base": "transparent"
@@ -390,19 +390,19 @@
     },
     "diff": {
       "text": {
-        "added": "#F0BF00",
-        "removed": "#685eff",
+        "added": "#00a338",
+        "removed": "#ee001c",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#fdf3d7",
+        "added": "#e6f7ea",
         "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#F0BF00",
-        "removed": "#685eff"
+        "added": "#00a338",
+        "removed": "#ee001c"
       },
       "lineNumber": {
         "text": "#666666",
@@ -414,29 +414,29 @@
     },
     "syntax": {
       "comment": "#8a8a8a",
-      "keyword": "#685eff",
+      "keyword": "#7A72FF",
       "function": "#1a1a1a",
       "variable": "#666666",
-      "string": "#685eff",
+      "string": "#7A72FF",
       "number": "#1a1a1a",
-      "type": "#685eff",
+      "type": "#7A72FF",
       "operator": "#666666",
       "punctuation": "#666666"
     },
     "markdown": {
       "text": "#1a1a1a",
-      "heading": "#685eff",
-      "link": "#685eff",
-      "linkText": "#685eff",
+      "heading": "#7A72FF",
+      "link": "#7A72FF",
+      "linkText": "#7A72FF",
       "code": "#F0BF00",
-      "blockQuote": "#685eff",
-      "emphasis": "#685eff",
+      "blockQuote": "#8B85FF",
+      "emphasis": "#7A72FF",
       "strong": "#1a1a1a",
       "horizontalRule": "#d0d0d0",
-      "listItem": "#685eff",
-      "listEnumeration": "#685eff",
-      "image": "#685eff",
-      "imageText": "#685eff",
+      "listItem": "#7A72FF",
+      "listEnumeration": "#7A72FF",
+      "image": "#7A72FF",
+      "imageText": "#7A72FF",
       "codeBlock": "#1a1a1a"
     },
     "highlight": {
@@ -468,7 +468,7 @@
       "accent": "$hue.interactive",
       "interactive": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -479,7 +479,7 @@
       },
       "red": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -490,7 +490,7 @@
       },
       "orange": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -501,7 +501,7 @@
       },
       "yellow": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -523,7 +523,7 @@
       },
       "cyan": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -534,7 +534,7 @@
       },
       "blue": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -545,7 +545,7 @@
       },
       "violet": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -556,7 +556,7 @@
       },
       "pink": {
         "100": "#8283f9",
-        "200": "#6F66FF",
+        "200": "#8B85FF",
         "300": "#5f56e1",
         "400": "#5046c4",
         "500": "#4237a8",
@@ -568,18 +568,26 @@
     },
     "diff": {
       "text": {
-        "added": "#FFFF4B"
+        "added": "#25BE6A",
+        "removed": "#ff2740",
+        "context": "#ffffff",
+        "hunkHeader": "#b0b0b0"
       },
       "highlight": {
-        "added": "#FFFF4B"
+        "added": "#25BE6A",
+        "removed": "#ff2740"
       },
       "background": {
-        "added": "#242100"
+        "added": "#0F2418",
+        "removed": "#2A1216",
+        "context": "#000000"
       },
       "lineNumber": {
         "background": {
-          "added": "#242100"
-        }
+          "added": "#0F2418",
+          "removed": "#2A1216"
+        },
+        "text": "#ffffff"
       }
     },
     "text": {
@@ -590,8 +598,7 @@
       },
       "action": {
         "primary": {
-          "$focused": "#1a1a1a",
-          "$selected": "#ffffff"
+          "$focused": "#1a1a1a"
         }
       },
       "added": "#25BE6A",
@@ -602,8 +609,7 @@
     "background": {
       "action": {
         "primary": {
-          "$focused": "#8F88FF",
-          "$selected": "#2c276b"
+          "$focused": "#8F88FF"
         }
       },
       "added": "#0F2418",

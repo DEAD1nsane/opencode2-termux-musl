@@ -100,18 +100,18 @@
     "diff": {
       "text": {
         "added": "#25BE6A",
-        "removed": "#FF914A",
+        "removed": "#ff2740",
         "context": "#ffffff",
-        "hunkHeader": "#FF914A"
+        "hunkHeader": "#b0b0b0"
       },
       "background": {
         "added": "#0F2418",
         "removed": "#2A1216",
-        "context": "$hue.neutral.800"
+        "context": "#000000"
       },
       "highlight": {
         "added": "#25BE6A",
-        "removed": "#FF914A"
+        "removed": "#ff2740"
       },
       "lineNumber": {
         "text": "#ffffff",
@@ -137,8 +137,8 @@
       "heading": "#FF914A",
       "link": "#FF914A",
       "linkText": "#FF914A",
-      "code": "#FF914A",
-      "blockQuote": "#FF914A",
+      "code": "#57B4FF",
+      "blockQuote": "#E78E55",
       "emphasis": "#FF914A",
       "strong": "#ffffff",
       "horizontalRule": "#181818",
@@ -351,7 +351,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#FF6B00",
-          "$selected": "#FF6B00"
+          "$selected": "transparent"
         },
         "secondary": {
           "base": "transparent"
@@ -390,19 +390,19 @@
     },
     "diff": {
       "text": {
-        "added": "#1FA2FF",
-        "removed": "#FF6B00",
+        "added": "#00a338",
+        "removed": "#ee001c",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#e3f1fd",
+        "added": "#e6f7ea",
         "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#1FA2FF",
-        "removed": "#FF6B00"
+        "added": "#00a338",
+        "removed": "#ee001c"
       },
       "lineNumber": {
         "text": "#666666",
@@ -429,7 +429,7 @@
       "link": "#FF6B00",
       "linkText": "#FF6B00",
       "code": "#1FA2FF",
-      "blockQuote": "#FF6B00",
+      "blockQuote": "#E78E55",
       "emphasis": "#FF6B00",
       "strong": "#1a1a1a",
       "horizontalRule": "#d0d0d0",
@@ -568,18 +568,26 @@
     },
     "diff": {
       "text": {
-        "added": "#33ADFF"
+        "added": "#25BE6A",
+        "removed": "#ff2740",
+        "context": "#ffffff",
+        "hunkHeader": "#b0b0b0"
       },
       "highlight": {
-        "added": "#33ADFF"
+        "added": "#25BE6A",
+        "removed": "#ff2740"
       },
       "background": {
-        "added": "#001a33"
+        "added": "#0F2418",
+        "removed": "#2A1216",
+        "context": "#000000"
       },
       "lineNumber": {
         "background": {
-          "added": "#001a33"
-        }
+          "added": "#0F2418",
+          "removed": "#2A1216"
+        },
+        "text": "#ffffff"
       }
     },
     "text": {
@@ -590,8 +598,7 @@
       },
       "action": {
         "primary": {
-          "$focused": "#1a1a1a",
-          "$selected": "#ffffff"
+          "$focused": "#1a1a1a"
         }
       },
       "added": "#25BE6A",
@@ -601,9 +608,7 @@
     },
     "background": {
       "action": {
-        "primary": {
-          "$selected": "#6b2d00"
-        }
+        "primary": {}
       },
       "added": "#0F2418",
       "removed": "#2A1216",

@@ -102,12 +102,12 @@
         "added": "#25BE6A",
         "removed": "#ff2740",
         "context": "#ffffff",
-        "hunkHeader": "#ff2740"
+        "hunkHeader": "#b0b0b0"
       },
       "background": {
         "added": "#0F2418",
         "removed": "#2A1216",
-        "context": "$hue.neutral.800"
+        "context": "#000000"
       },
       "highlight": {
         "added": "#25BE6A",
@@ -137,8 +137,8 @@
       "heading": "#ff2740",
       "link": "#ff2740",
       "linkText": "#ff2740",
-      "code": "#ff2740",
-      "blockQuote": "#ff2740",
+      "code": "#FFFF4B",
+      "blockQuote": "#E75566",
       "emphasis": "#ff2740",
       "strong": "#ffffff",
       "horizontalRule": "#181818",
@@ -351,7 +351,7 @@
           "base": "transparent",
           "$hovered": "#e3e3e3",
           "$focused": "#ee001c",
-          "$selected": "#ee001c"
+          "$selected": "transparent"
         },
         "secondary": {
           "base": "transparent"
@@ -390,18 +390,18 @@
     },
     "diff": {
       "text": {
-        "added": "#F0BF00",
+        "added": "#00a338",
         "removed": "#ee001c",
         "context": "#1a1a1a",
         "hunkHeader": "#8a8a8a"
       },
       "background": {
-        "added": "#fdf3d7",
+        "added": "#e6f7ea",
         "removed": "#fdeaea",
         "context": "#ffffff"
       },
       "highlight": {
-        "added": "#F0BF00",
+        "added": "#00a338",
         "removed": "#ee001c"
       },
       "lineNumber": {
@@ -429,7 +429,7 @@
       "link": "#ee001c",
       "linkText": "#ee001c",
       "code": "#F0BF00",
-      "blockQuote": "#ee001c",
+      "blockQuote": "#E75566",
       "emphasis": "#ee001c",
       "strong": "#1a1a1a",
       "horizontalRule": "#d0d0d0",
@@ -568,18 +568,26 @@
     },
     "diff": {
       "text": {
-        "added": "#FFFF4B"
+        "added": "#25BE6A",
+        "removed": "#ff2740",
+        "context": "#ffffff",
+        "hunkHeader": "#b0b0b0"
       },
       "highlight": {
-        "added": "#FFFF4B"
+        "added": "#25BE6A",
+        "removed": "#ff2740"
       },
       "background": {
-        "added": "#242100"
+        "added": "#0F2418",
+        "removed": "#2A1216",
+        "context": "#000000"
       },
       "lineNumber": {
         "background": {
-          "added": "#242100"
-        }
+          "added": "#0F2418",
+          "removed": "#2A1216"
+        },
+        "text": "#ffffff"
       }
     },
     "text": {
@@ -590,8 +598,7 @@
       },
       "action": {
         "primary": {
-          "$focused": "#1a1a1a",
-          "$selected": "#ffffff"
+          "$focused": "#1a1a1a"
         }
       },
       "added": "#25BE6A",
@@ -601,9 +608,7 @@
     },
     "background": {
       "action": {
-        "primary": {
-          "$selected": "#64000c"
-        }
+        "primary": {}
       },
       "added": "#0F2418",
       "removed": "#2A1216",
