@@ -15,15 +15,15 @@ The installer is idempotent — re-running it refreshes the binary (default) or,
 
 ### What lands on disk
 
-| Path | Purpose |
-|---|---|
-| `$PREFIX/bin/opencode` | wrapper (env, proxy autostart, `--standalone` injection) |
-| `$PREFIX/bin/opencode-shared` | same, but forces shared-service mode |
-| `$PREFIX/libexec/opencode/opencode-v2-musl.bin` | upstream musl binary, interpreter patched |
-| `$PREFIX/libexec/opencode/proxy.py` | local HTTPS proxy (Python) |
-| `$PREFIX/lib/ld-musl-aarch64.so.1` | musl loader (from Alpine) |
-| `$PREFIX/lib/libstdc++.so.6`, `libgcc_s.so.1` | C++ runtime for the musl binary |
-| `$PREFIX/lib/libresolvefix.so` | musl DNS shim (resolv.conf redirect) |
+| Path                                            | Purpose                                                  |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| `$PREFIX/bin/opencode`                          | wrapper (env, proxy autostart, `--standalone` injection) |
+| `$PREFIX/bin/opencode-shared`                   | same, but forces shared-service mode                     |
+| `$PREFIX/libexec/opencode/opencode-v2-musl.bin` | upstream musl binary, interpreter patched                |
+| `$PREFIX/libexec/opencode/proxy.py`             | local HTTPS proxy (Python)                               |
+| `$PREFIX/lib/ld-musl-aarch64.so.1`              | musl loader (from Alpine)                                |
+| `$PREFIX/lib/libstdc++.so.6`, `libgcc_s.so.1`   | C++ runtime for the musl binary                          |
+| `$PREFIX/lib/libresolvefix.so`                  | musl DNS shim (resolv.conf redirect)                     |
 
 ## Versions, pinning, offline
 
@@ -52,10 +52,10 @@ Plugins must use the v2 format (`export default { id, setup }`). v1-format plugi
 
 ## Standalone vs shared service
 
-| Mode | How | Behavior |
-|---|---|---|
-| Standalone (default) | `opencode run …` | wrapper injects `--standalone` → private server per call |
-| Shared service | `opencode-shared serve --service &` | one server; TUI + `OPENCODE_STANDALONE=0 opencode run` attach to it |
+| Mode                 | How                                 | Behavior                                                            |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------------- |
+| Standalone (default) | `opencode run …`                    | wrapper injects `--standalone` → private server per call            |
+| Shared service       | `opencode-shared serve --service &` | one server; TUI + `OPENCODE_STANDALONE=0 opencode run` attach to it |
 
 Start the shared service through `opencode-shared` (or with `OPENCODE_STANDALONE=0`), so the proxy env is set. Killing the phone's Termux process kills the service; restart it after Termux restarts if you want TUI attach mode.
 
@@ -72,15 +72,18 @@ Installs global prettier and rewrites the `formatter` key of `~/.config/opencode
 ```sh
 ./scripts/check-update.sh          # check only
 ./scripts/check-update.sh --yes    # apply via install.sh
+./scripts/auto-update.sh           # unattended entrypoint (check-update.sh --yes)
 ```
 
-Daily unattended (Termux:API):
+Daily unattended auto-update (Termux:API):
 
 ```sh
 termux-job-scheduler --job-id 7802 --period-ms 86400000 \
   --network unmetered --persisted true \
-  -s "$HOME/GitHub/opencode2-termux-musl/scripts/check-update.sh"
+  -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
+
+To be notified but not auto-apply, point the job at `scripts/check-update.sh` instead. If a v1-era job (7801/7802) still points at the archived `opencode-termux-musl` repo, reschedule it with the path above — the v1 script checks the v1 GitHub tag channel and exits "nothing to do" forever once `opencode` reports 2.x.
 
 ## Troubleshooting
 
@@ -100,7 +103,7 @@ A v1-format plugin is being loaded. Port it to `export default { id, setup }` or
 `pkg install clang patchelf` manually, then re-run `install.sh`.
 
 **Proxy port 8080 already in use**
-Another process owns the port; the wrapper skips starting `proxy.py` when any `proxy.py` is already running. If a *foreign* process squats the port, stop it or change the port in `scripts/proxy.py` + the wrapper's `HTTP(S)_PROXY` values (`OPENCODE_WRAPPER_ONLY=1 sh install.sh` after editing).
+Another process owns the port; the wrapper skips starting `proxy.py` when any `proxy.py` is already running. If a _foreign_ process squats the port, stop it or change the port in `scripts/proxy.py` + the wrapper's `HTTP(S)_PROXY` values (`OPENCODE_WRAPPER_ONLY=1 sh install.sh` after editing).
 
 ## Uninstall
 

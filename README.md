@@ -65,14 +65,14 @@ Full details, including migration from v1, are in [docs/INSTALL.md](docs/INSTALL
 
 ## Verify
 
-| Check | Command | Status (2.0.21 on Pixel 10) |
-|---|---|---|
-| Version | `opencode --version` | `opencode v2.0.21` |
-| DNS + API | `opencode run -m opencode-go/mimo-v2.5 "Reply with exactly: PONG"` | works via Python proxy |
-| Models / auth | `opencode models`, `opencode auth list` | OpenCode Go key stored |
-| Themes | 8 native v2 AMOLED themes in [`themes/`](themes/) | copy + `/themes` |
-| Plugins | v2 format `export default { id, setup }` | auto-loaded from `~/.config/opencode/plugins/` |
-| MCP | `opencode.json` `mcp` block | Railway / GitHub / Upstash / Chrome DevTools verified |
+| Check         | Command                                                            | Status (2.0.21 on Pixel 10)                           |
+| ------------- | ------------------------------------------------------------------ | ----------------------------------------------------- |
+| Version       | `opencode --version`                                               | `opencode v2.0.21`                                    |
+| DNS + API     | `opencode run -m opencode-go/mimo-v2.5 "Reply with exactly: PONG"` | works via Python proxy                                |
+| Models / auth | `opencode models`, `opencode auth list`                            | OpenCode Go key stored                                |
+| Themes        | 8 native v2 AMOLED themes in [`themes/`](themes/)                  | copy + `/themes`                                      |
+| Plugins       | v2 format `export default { id, setup }`                           | auto-loaded from `~/.config/opencode/plugins/`        |
+| MCP           | `opencode.json` `mcp` block                                        | Railway / GitHub / Upstash / Chrome DevTools verified |
 
 If `run` times out with `getaddrinfo ETIMEOUT opencode.ai`, the network path is broken — check that the wrapper's proxy env is present and `proxy.py` is running (`pgrep -f proxy.py`).
 
@@ -106,16 +106,16 @@ cp themes/*.json ~/.config/opencode/themes/
 
 Then pick one with `/themes` inside OpenCode. The seven accent themes are deliberately restrained — each leans on a single accent color for syntax highlighting on pure black; `8-rainbow-amoled` is the exception (white chrome, red links, full neon syntax).
 
-| # | Theme | Accent | Dark | Light |
-|---|---|---|---|---|
-| 1 | [`1-rbw-amoled`](themes/1-rbw-amoled.json) | Red `#ff2740` | <a href="docs/screenshots/themes/1-rbw-amoled.png"><img src="docs/screenshots/themes/1-rbw-amoled.png" width="300" alt="1-rbw-amoled theme preview"></a> | <a href="docs/screenshots/themes/1-rbw-amoled-light.png"><img src="docs/screenshots/themes/1-rbw-amoled-light.png" width="300" alt="1-rbw-amoled light preview"></a> |
-| 2 | [`2-obw-amoled`](themes/2-obw-amoled.json) | Orange `#FF914A` | <a href="docs/screenshots/themes/2-obw-amoled.png"><img src="docs/screenshots/themes/2-obw-amoled.png" width="300" alt="2-obw-amoled theme preview"></a> | <a href="docs/screenshots/themes/2-obw-amoled-light.png"><img src="docs/screenshots/themes/2-obw-amoled-light.png" width="300" alt="2-obw-amoled light preview"></a> |
-| 3 | [`3-ybw-amoled`](themes/3-ybw-amoled.json) | Yellow `#FFFF4B` | <a href="docs/screenshots/themes/3-ybw-amoled.png"><img src="docs/screenshots/themes/3-ybw-amoled.png" width="300" alt="3-ybw-amoled theme preview"></a> | <a href="docs/screenshots/themes/3-ybw-amoled-light.png"><img src="docs/screenshots/themes/3-ybw-amoled-light.png" width="300" alt="3-ybw-amoled light preview"></a> |
-| 4 | [`4-gbw-amoled`](themes/4-gbw-amoled.json) | Green `#00FF7A` | <a href="docs/screenshots/themes/4-gbw-amoled.png"><img src="docs/screenshots/themes/4-gbw-amoled.png" width="300" alt="4-gbw-amoled theme preview"></a> | <a href="docs/screenshots/themes/4-gbw-amoled-light.png"><img src="docs/screenshots/themes/4-gbw-amoled-light.png" width="300" alt="4-gbw-amoled light preview"></a> |
-| 5 | [`5-bbw-amoled`](themes/5-bbw-amoled.json) | Blue `#0090FF` | <a href="docs/screenshots/themes/5-bbw-amoled.png"><img src="docs/screenshots/themes/5-bbw-amoled.png" width="300" alt="5-bbw-amoled theme preview"></a> | <a href="docs/screenshots/themes/5-bbw-amoled-light.png"><img src="docs/screenshots/themes/5-bbw-amoled-light.png" width="300" alt="5-bbw-amoled light preview"></a> |
-| 6 | [`6-vbw-amoled`](themes/6-vbw-amoled.json) | Violet `#6F66FF` | <a href="docs/screenshots/themes/6-vbw-amoled.png"><img src="docs/screenshots/themes/6-vbw-amoled.png" width="300" alt="6-vbw-amoled theme preview"></a> | <a href="docs/screenshots/themes/6-vbw-amoled-light.png"><img src="docs/screenshots/themes/6-vbw-amoled-light.png" width="300" alt="6-vbw-amoled light preview"></a> |
-| 7 | [`7-pbw-amoled`](themes/7-pbw-amoled.json) | Pink `#FF60F8` | <a href="docs/screenshots/themes/7-pbw-amoled.png"><img src="docs/screenshots/themes/7-pbw-amoled.png" width="300" alt="7-pbw-amoled theme preview"></a> | <a href="docs/screenshots/themes/7-pbw-amoled-light.png"><img src="docs/screenshots/themes/7-pbw-amoled-light.png" width="300" alt="7-pbw-amoled light preview"></a> |
-| 8 | [`8-rainbow-amoled`](themes/8-rainbow-amoled.json) | Full neon (multi) | <a href="docs/screenshots/themes/8-rainbow-amoled.png"><img src="docs/screenshots/themes/8-rainbow-amoled.png" width="300" alt="8-rainbow-amoled theme preview"></a> | <a href="docs/screenshots/themes/8-rainbow-amoled-light.png"><img src="docs/screenshots/themes/8-rainbow-amoled-light.png" width="300" alt="8-rainbow-amoled light preview"></a> |
+| #   | Theme                                              | Accent            | Dark                                                                                                                                                                 | Light                                                                                                                                                                            |
+| --- | -------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | [`1-rbw-amoled`](themes/1-rbw-amoled.json)         | Red `#ff2740`     | <a href="docs/screenshots/themes/1-rbw-amoled.png"><img src="docs/screenshots/themes/1-rbw-amoled.png" width="300" alt="1-rbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/1-rbw-amoled-light.png"><img src="docs/screenshots/themes/1-rbw-amoled-light.png" width="300" alt="1-rbw-amoled light preview"></a>             |
+| 2   | [`2-obw-amoled`](themes/2-obw-amoled.json)         | Orange `#FF914A`  | <a href="docs/screenshots/themes/2-obw-amoled.png"><img src="docs/screenshots/themes/2-obw-amoled.png" width="300" alt="2-obw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/2-obw-amoled-light.png"><img src="docs/screenshots/themes/2-obw-amoled-light.png" width="300" alt="2-obw-amoled light preview"></a>             |
+| 3   | [`3-ybw-amoled`](themes/3-ybw-amoled.json)         | Yellow `#FFFF4B`  | <a href="docs/screenshots/themes/3-ybw-amoled.png"><img src="docs/screenshots/themes/3-ybw-amoled.png" width="300" alt="3-ybw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/3-ybw-amoled-light.png"><img src="docs/screenshots/themes/3-ybw-amoled-light.png" width="300" alt="3-ybw-amoled light preview"></a>             |
+| 4   | [`4-gbw-amoled`](themes/4-gbw-amoled.json)         | Green `#00FF7A`   | <a href="docs/screenshots/themes/4-gbw-amoled.png"><img src="docs/screenshots/themes/4-gbw-amoled.png" width="300" alt="4-gbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/4-gbw-amoled-light.png"><img src="docs/screenshots/themes/4-gbw-amoled-light.png" width="300" alt="4-gbw-amoled light preview"></a>             |
+| 5   | [`5-bbw-amoled`](themes/5-bbw-amoled.json)         | Blue `#0090FF`    | <a href="docs/screenshots/themes/5-bbw-amoled.png"><img src="docs/screenshots/themes/5-bbw-amoled.png" width="300" alt="5-bbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/5-bbw-amoled-light.png"><img src="docs/screenshots/themes/5-bbw-amoled-light.png" width="300" alt="5-bbw-amoled light preview"></a>             |
+| 6   | [`6-vbw-amoled`](themes/6-vbw-amoled.json)         | Violet `#6F66FF`  | <a href="docs/screenshots/themes/6-vbw-amoled.png"><img src="docs/screenshots/themes/6-vbw-amoled.png" width="300" alt="6-vbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/6-vbw-amoled-light.png"><img src="docs/screenshots/themes/6-vbw-amoled-light.png" width="300" alt="6-vbw-amoled light preview"></a>             |
+| 7   | [`7-pbw-amoled`](themes/7-pbw-amoled.json)         | Pink `#FF60F8`    | <a href="docs/screenshots/themes/7-pbw-amoled.png"><img src="docs/screenshots/themes/7-pbw-amoled.png" width="300" alt="7-pbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/7-pbw-amoled-light.png"><img src="docs/screenshots/themes/7-pbw-amoled-light.png" width="300" alt="7-pbw-amoled light preview"></a>             |
+| 8   | [`8-rainbow-amoled`](themes/8-rainbow-amoled.json) | Full neon (multi) | <a href="docs/screenshots/themes/8-rainbow-amoled.png"><img src="docs/screenshots/themes/8-rainbow-amoled.png" width="300" alt="8-rainbow-amoled theme preview"></a> | <a href="docs/screenshots/themes/8-rainbow-amoled-light.png"><img src="docs/screenshots/themes/8-rainbow-amoled-light.png" width="300" alt="8-rainbow-amoled light preview"></a> |
 
 ## Formatter on Termux
 
@@ -134,9 +134,20 @@ This installs prettier globally via Termux npm and points opencode at `node <pre
 ```sh
 ./scripts/check-update.sh          # check (exit 2 + notification if behind)
 ./scripts/check-update.sh --yes    # check + re-run install.sh if behind
+./scripts/auto-update.sh           # same as check-update.sh --yes (job entrypoint)
 ```
 
 v2 updates come from the npm channel only; the script compares against `opencode.ai/update/api/latest/cli/npm` and never downgrades.
+
+Daily unattended auto-update (needs the Termux:API app — Wi-Fi only, survives reboot):
+
+```sh
+termux-job-scheduler --job-id 7802 --period-ms 86400000 \
+  --network unmetered --persisted true \
+  -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
+```
+
+Migrating the v1-era job (7801/7802 pointed at the archived `opencode-termux-musl` repo): reschedule the same job id with the path above — the v1 script compares against v1 GitHub tags and silently exits "nothing to do" once `opencode` reports 2.x.
 
 ## Migrating from v1 / side-by-side
 

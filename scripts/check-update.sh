@@ -12,10 +12,13 @@
 #
 # Exit codes: 0 = up to date, 1 = error, 2 = update available.
 #
-# Unattended daily check (needs the Termux:API app):
+# Unattended daily check (needs the Termux:API app) — notify only:
 #   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
 #     --network unmetered --persisted true \
 #     -s /path/to/opencode2-termux-musl/scripts/check-update.sh
+#
+# Unattended daily auto-update (check + apply): point the job at
+# scripts/auto-update.sh instead, which execs this script with --yes.
 #
 # Requires: curl.
 
@@ -86,5 +89,7 @@ if [ "$APPLY" -eq 1 ]; then
   fi
 fi
 
-notify "opencode $installed -> $latest available. Re-run install.sh to update."
+# With auto-update.sh running unattended (job 7802), this notification
+# only needs to inform — no manual step to nag about.
+notify "opencode $installed -> $latest available."
 exit 2
