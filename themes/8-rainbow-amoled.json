@@ -40,10 +40,10 @@
       },
       "feedback": {
         "error": {
-          "base": "#ff2740"
+          "base": "#FFFF4B"
         },
         "warning": {
-          "base": "#ff2740"
+          "base": "#FFFF4B"
         },
         "success": {
           "base": "#25BE6A"
@@ -71,7 +71,7 @@
           "base": "transparent"
         },
         "destructive": {
-          "base": "#ff2740"
+          "base": "#FFFF4B"
         }
       },
       "formfield": {
@@ -138,7 +138,7 @@
       "heading": "#ffffff",
       "link": "#39FF14",
       "linkText": "#b0b0b0",
-      "code": "#FFFF4B",
+      "code": "#ff2740",
       "blockQuote": "#b0b0b0",
       "emphasis": "#ffffff",
       "strong": "#ffffff",
@@ -305,7 +305,7 @@
       },
       "feedback": {
         "error": {
-          "base": "#ee001c"
+          "base": "#F0BF00"
         },
         "warning": {
           "base": "#F0BF00"
@@ -318,7 +318,7 @@
         }
       },
       "added": "#00a338",
-      "removed": "#ee001c",
+      "removed": "#F0BF00",
       "context": "#1a1a1a",
       "hunkHeader": "#8a8a8a"
     },
@@ -411,7 +411,7 @@
       "heading": "#1a1a1a",
       "link": "#00a844",
       "linkText": "#666666",
-      "code": "#F0BF00",
+      "code": "#ee001c",
       "blockQuote": "#8a8a8a",
       "emphasis": "#1a1a1a",
       "strong": "#1a1a1a",
@@ -424,7 +424,7 @@
     },
     "highlight": {
       "added": "#00a338",
-      "removed": "#ee001c"
+      "removed": "#F0BF00"
     },
     "lineNumber": {
       "text": "#666666",
@@ -552,13 +552,13 @@
         "primary": {}
       },
       "added": "#25BE6A",
-      "removed": "#ff2740",
+      "removed": "#FFFF4B",
       "context": "#ffffff",
       "hunkHeader": "#b0b0b0"
     },
     "highlight": {
       "added": "#25BE6A",
-      "removed": "#ff2740"
+      "removed": "#FFFF4B"
     },
     "lineNumber": {
       "text": "#ffffff",
