@@ -549,6 +549,12 @@
         "success": {
           "base": "#33ADFF"
         }
+      },
+      "action": {
+        "primary": {
+          "$focused": "#1a1a1a",
+          "$selected": "#1a1a1a"
+        }
       }
     }
   }
