@@ -9,6 +9,15 @@
 #   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
 #     --network unmetered --persisted true \
 #     -s /data/data/com.termux/files/home/GitHub/opencode2-termux-musl/scripts/auto-update.sh
-set -e
+#
+# Every run appends to ~/.opencode-auto-update.log (override with
+# OPENCODE_AUTO_UPDATE_LOG) — Android runs this unattended, so without a
+# log a failed check/install is invisible.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-exec "$SCRIPT_DIR/check-update.sh" --yes
+LOG="${OPENCODE_AUTO_UPDATE_LOG:-$HOME/.opencode-auto-update.log}"
+exec >>"$LOG" 2>&1
+echo "=== $(date '+%F %T') auto-update start ==="
+rc=0
+"$SCRIPT_DIR/check-update.sh" --yes || rc=$?
+echo "=== $(date '+%F %T') auto-update exit $rc ==="
+exit "$rc"

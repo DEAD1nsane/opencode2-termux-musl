@@ -156,7 +156,11 @@ else
     log "Using local tarball: $OPENCODE_TARBALL_PATH"
     cp "$OPENCODE_TARBALL_PATH" "$WORK/$TARBALL"
   else
-    if ! curl -fL --progress-bar -o "$WORK/$TARBALL" "$URL"; then
+    # Retry + resume: an 84MB tarball on mobile networks commonly dies
+    # mid-transfer (curl 56 SSL EOF); without this the unattended job
+    # fails silently and never converges on the new version.
+    if ! curl -fL --retry 5 --retry-delay 3 --retry-all-errors -C - \
+        --progress-bar -o "$WORK/$TARBALL" "$URL"; then
       log "Hint: download manually, then re-run with OPENCODE_TARBALL_PATH:"
       log "  curl -L -C - -o $TARBALL $URL"
       die "Download failed: $URL"

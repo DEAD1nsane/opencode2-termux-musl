@@ -75,8 +75,12 @@ fi
 # scheduled, updates apply on their own; without it, the only instruction
 # should be to schedule auto-update.sh (the docs' step 1).
 auto_job_scheduled=0
+# `timeout` guards the API call: termux-job-scheduler talks to the
+# Termux:API app over a socket and can block indefinitely when that
+# bridge is unavailable (e.g. inside the unattended job itself),
+# wedging the whole run with no output.
 if command -v termux-job-scheduler >/dev/null 2>&1 \
-  && termux-job-scheduler -p 2>/dev/null | grep -q "auto-update\.sh"; then
+  && timeout 10 termux-job-scheduler -p 2>/dev/null | grep -q "auto-update\.sh"; then
   auto_job_scheduled=1
 fi
 
