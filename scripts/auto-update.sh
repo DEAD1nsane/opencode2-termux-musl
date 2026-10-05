@@ -7,7 +7,7 @@
 #
 # Scheduled via Termux:API (see docs/INSTALL.md):
 #   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
-#     --network unmetered --persisted true \
+#     --network any --persisted true \
 #     -s /data/data/com.termux/files/home/GitHub/opencode2-termux-musl/scripts/auto-update.sh
 #
 # Every run appends to ~/.opencode-auto-update.log (override with

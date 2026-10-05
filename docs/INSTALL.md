@@ -73,7 +73,7 @@ Unattended daily auto-update (Termux:API — schedule once, applies updates on i
 
 ```sh
 termux-job-scheduler --job-id 7802 --period-ms 86400000 \
-  --network unmetered --persisted true \
+  --network any --persisted true \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
 

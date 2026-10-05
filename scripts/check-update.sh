@@ -15,7 +15,7 @@
 #
 # Unattended daily auto-update (check + apply; needs the Termux:API app):
 #   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
-#     --network unmetered --persisted true \
+#     --network any --persisted true \
 #     -s /path/to/opencode2-termux-musl/scripts/auto-update.sh
 #
 # The check-only notification adapts to whether that job is scheduled:
