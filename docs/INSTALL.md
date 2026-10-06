@@ -69,10 +69,10 @@ Installs global prettier and rewrites the `formatter` key of `~/.config/opencode
 
 ## Updating
 
-Unattended daily auto-update (Termux:API — schedule once, applies updates on its own):
+Unattended auto-update (Termux:API — schedule once, applies updates on its own):
 
 ```sh
-termux-job-scheduler --job-id 7802 --period-ms 86400000 \
+termux-job-scheduler --job-id 7802 --period-ms 21600000 \
   --network any --persisted true \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```

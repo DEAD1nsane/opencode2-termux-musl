@@ -131,15 +131,15 @@ This installs prettier globally via Termux npm and points opencode at `node <pre
 
 ## Updating
 
-Updates are unattended: schedule the daily job once and forget it.
+Updates are unattended: schedule the job once (checks every 6h) and forget it.
 
 ```sh
-termux-job-scheduler --job-id 7802 --period-ms 86400000 \
-  --network unmetered --persisted true \
+termux-job-scheduler --job-id 7802 --period-ms 21600000 \
+  --network any --persisted true \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
 
-The job (needs the Termux:API app — Wi-Fi only, survives reboot) checks the npm channel and re-runs `install.sh` only when behind; it never downgrades. You get a notification on success or failure, nothing to do manually.
+The job (needs the Termux:API app — any network, survives reboot) checks the npm channel and re-runs `install.sh` only when behind; it never downgrades. You get a notification on success or failure, nothing to do manually. Runs are logged to `~/.opencode-auto-update.log`.
 
 Manual options, if you ever need them:
 

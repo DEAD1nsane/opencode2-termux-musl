@@ -13,8 +13,8 @@
 #
 # Exit codes: 0 = up to date, 1 = error, 2 = update available.
 #
-# Unattended daily auto-update (check + apply; needs the Termux:API app):
-#   termux-job-scheduler --job-id 7802 --period-ms 86400000 \
+# Unattended auto-update (check + apply; needs the Termux:API app):
+#   termux-job-scheduler --job-id 7802 --period-ms 21600000 \
 #     --network any --persisted true \
 #     -s /path/to/opencode2-termux-musl/scripts/auto-update.sh
 #
@@ -86,7 +86,7 @@ fi
 
 if [ "$APPLY" -eq 0 ]; then
   if [ "$auto_job_scheduled" -eq 1 ]; then
-    echo "Update available: installed $installed, latest $latest (daily job applies it)."
+    echo "Update available: installed $installed, latest $latest (auto-update job applies it)."
   else
     echo "Update available: installed $installed, latest $latest."
     echo "No auto-update job scheduled — run: scripts/auto-update.sh (see docs/INSTALL.md)."
@@ -115,7 +115,7 @@ if [ "$APPLY" -eq 1 ]; then
 fi
 
 if [ "$auto_job_scheduled" -eq 1 ]; then
-  notify "opencode $installed -> $latest available. Applied automatically by the daily job."
+  notify "opencode $installed -> $latest available. Applied automatically by the update job."
 else
   notify "opencode $installed -> $latest available. Schedule scripts/auto-update.sh for unattended updates (see docs/INSTALL.md)."
 fi

@@ -156,11 +156,14 @@ else
     log "Using local tarball: $OPENCODE_TARBALL_PATH"
     cp "$OPENCODE_TARBALL_PATH" "$WORK/$TARBALL"
   else
+    # Progress meter only on a real terminal: under the unattended job
+    # stderr lands in auto-update's log, where every \r frame appends.
+    if [ -t 2 ]; then PROGRESS="--progress-bar"; else PROGRESS="--no-progress-meter"; fi
     # Retry + resume: an 84MB tarball on mobile networks commonly dies
     # mid-transfer (curl 56 SSL EOF); without this the unattended job
     # fails silently and never converges on the new version.
     if ! curl -fL --retry 5 --retry-delay 3 --retry-all-errors -C - \
-        --progress-bar -o "$WORK/$TARBALL" "$URL"; then
+        $PROGRESS -o "$WORK/$TARBALL" "$URL"; then
       log "Hint: download manually, then re-run with OPENCODE_TARBALL_PATH:"
       log "  curl -L -C - -o $TARBALL $URL"
       die "Download failed: $URL"
