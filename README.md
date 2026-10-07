@@ -40,7 +40,7 @@ Then verify:
 
 ```sh
 opencode --version
-opencode run -m opencode-go/mimo-v2.5 "say hi"
+opencode run "say hi"
 ```
 
 ### What install.sh does
@@ -65,14 +65,14 @@ Full details, including migration from v1, are in [docs/INSTALL.md](docs/INSTALL
 
 ## Verify
 
-| Check         | Command                                                            | Status (2.0.21 on Pixel 10)                           |
-| ------------- | ------------------------------------------------------------------ | ----------------------------------------------------- |
-| Version       | `opencode --version`                                               | `opencode v2.0.21`                                    |
-| DNS + API     | `opencode run -m opencode-go/mimo-v2.5 "Reply with exactly: PONG"` | works via Python proxy                                |
-| Models / auth | `opencode models`, `opencode auth list`                            | OpenCode Go key stored                                |
-| Themes        | 8 native v2 AMOLED themes in [`themes/`](themes/)                  | copy + `/themes`                                      |
-| Plugins       | v2 format `export default { id, setup }`                           | auto-loaded from `~/.config/opencode/plugins/`        |
-| MCP           | `opencode.json` `mcp` block                                        | Railway / GitHub / Upstash / Chrome DevTools verified |
+| Check         | Command                                           | Status (2.0.21 on Pixel 10)                           |
+| ------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| Version       | `opencode --version`                              | `opencode v2.0.21`                                    |
+| DNS + API     | `opencode run "Reply with exactly: PONG"`         | works via Python proxy                                |
+| Models / auth | `opencode models`, `opencode auth list`           | OpenCode Go key stored                                |
+| Themes        | 8 native v2 AMOLED themes in [`themes/`](themes/) | copy + `/themes`                                      |
+| Plugins       | v2 format `export default { id, setup }`          | auto-loaded from `~/.config/opencode/plugins/`        |
+| MCP           | `opencode.json` `mcp` block                       | Railway / GitHub / Upstash / Chrome DevTools verified |
 
 If `run` times out with `getaddrinfo ETIMEOUT opencode.ai`, the network path is broken — check that the wrapper's proxy env is present and `proxy.py` is running (`pgrep -f proxy.py`).
 

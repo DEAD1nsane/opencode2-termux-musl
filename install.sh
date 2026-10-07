@@ -333,7 +333,7 @@ cat <<'MSG'
 
 Install complete. Verify:
   opencode --version
-  opencode run -m opencode-go/mimo-v2.5 "say hi"
+  opencode run "say hi"
 
 Outbound HTTPS goes through the Python proxy on 127.0.0.1:8080 because
 Node/c-ares cannot use musl DNS on Android. The wrapper starts the proxy
