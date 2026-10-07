@@ -167,6 +167,7 @@ sh scripts/remove-v1.sh       # deletes v1 binary + opencode2 leftovers (~350 MB
 ## Known limitations
 
 - **Formatter**: needs `enable-formatter.sh` once (shebang issue above). Without it, formatting silently no-ops.
+- **Theme `system` mode**: follows the _terminal_ background (OSC 11), not the Android day/night mode — Termux's background is fixed, so `system` never auto-switches. Use `scripts/theme-sync.sh` for time-based light/dark (see below).
 - **PTY support**: depends on `librust_pty_arm64.so`; not shipped yet. PRs welcome.
 - **Proxy latency**: ~100–200 ms per outbound request (see Network above).
 

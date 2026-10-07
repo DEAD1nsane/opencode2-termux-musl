@@ -67,6 +67,32 @@ sh scripts/enable-formatter.sh
 
 Installs global prettier and rewrites the `formatter` key of `~/.config/opencode/opencode.json` to invoke it via `node` directly. Restart opencode afterwards. Rollback: restore the generated `opencode.json.bak`.
 
+## Theme day/night (`system` mode follows the terminal, not Android)
+
+`cli.json` `"theme.mode": "system"` tracks the terminal background via OSC 11
+— not the phone's day/night mode. Termux's background is fixed by
+`~/.termux/colors.properties`, so `system` always resolves to the same variant
+and never switches at sunrise/sunset. Setting the mode to `light`/`dark`
+manually works because it bypasses terminal detection. Termux cannot read the
+OS night mode unprivileged (`settings`/`cmd uimode` both throw
+`SecurityException`), so time of day is the only permission-free signal:
+
+```sh
+sh scripts/theme-sync.sh --status       # show current vs computed mode
+sh scripts/theme-sync.sh                # apply (light 07:00–19:00, dark otherwise)
+sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30
+```
+
+Only `theme.mode` is rewritten (name preserved, `.bak-theme-sync` backup).
+Takes effect on next TUI launch. Hourly unattended sync (job id 7803, clear of
+the auto-update job 7802):
+
+```sh
+termux-job-scheduler --job-id 7803 --period-ms 3600000 \
+  --persisted true \
+  -s "$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
+```
+
 ## Updating
 
 Unattended auto-update (Termux:API — schedule once, applies updates on its own):
