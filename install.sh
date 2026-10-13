@@ -137,6 +137,13 @@ if [ "$OPENCODE_VERSION" = "latest" ]; then
   log "Resolving latest OpenCode v2 version..."
   META=$(curl -fsSL "$UPDATE_API" || true)
   OPENCODE_VERSION=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+  # Fall back to the npm registry when the opencode.ai endpoint is down —
+  # /latest has the same JSON shape ({"version":"x.y.z",...}).
+  if [ -z "$OPENCODE_VERSION" ]; then
+    log "Primary update API unreachable, trying npm registry..."
+    META=$(curl -fsSL "https://registry.npmjs.org/@opencode%2Fcli/latest" || true)
+    OPENCODE_VERSION=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+  fi
   [ -n "$OPENCODE_VERSION" ] || die "Could not resolve v2 version from $UPDATE_API"
 fi
 OPENCODE_VERSION="${OPENCODE_VERSION#v}"

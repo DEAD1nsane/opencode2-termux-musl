@@ -53,6 +53,12 @@ installed="$("$CMD" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | 
 [ -n "$installed" ] || { echo "Could not read installed opencode version." >&2; exit 1; }
 META=$(curl -fsSL "$UPDATE_API" 2>/dev/null || true)
 latest=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+# Fall back to the npm registry when the opencode.ai endpoint is down —
+# /latest has the same JSON shape ({"version":"x.y.z",...}).
+if [ -z "$latest" ]; then
+  META=$(curl -fsSL "https://registry.npmjs.org/@opencode%2Fcli/latest" 2>/dev/null || true)
+  latest=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
+fi
 [ -n "$latest" ] || { echo "Could not resolve latest version from $UPDATE_API." >&2; exit 1; }
 latest="${latest#v}"
 
