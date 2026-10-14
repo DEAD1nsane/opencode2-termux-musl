@@ -45,7 +45,7 @@ done
 
 notify() {
   if command -v termux-notification >/dev/null 2>&1; then
-    termux-notification --title "opencode update" --content "$1" 2>/dev/null || true
+    termux-notification --id "opencode-update" --action "/data/data/com.termux/files/usr/bin/am start -n com.termux/com.termux.app.TermuxActivity" --title "opencode update" --content "$1" 2>/dev/null || true
   fi
 }
 

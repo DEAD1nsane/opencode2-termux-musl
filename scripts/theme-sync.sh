@@ -24,7 +24,7 @@
 #   sh scripts/theme-sync.sh --light         # force light mode now
 #   sh scripts/theme-sync.sh --dark          # force dark mode now
 #   sh scripts/theme-sync.sh --system        # restore mode "system"
-#   sh scripts/theme-sync.sh --light-start 06:30 --light-end 18:30
+#   sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30
 #
 # Env knobs:
 #   THEME_SYNC_LIGHT_START=07:00  THEME_SYNC_LIGHT_END=19:00
