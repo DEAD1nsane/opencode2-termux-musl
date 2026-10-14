@@ -20,10 +20,26 @@
 # Environment:
 #   OPENCODE_VERSION        pin version (default: latest from opencode.ai)
 #   OPENCODE_TARBALL_PATH   use a pre-downloaded npm tarball
+#   OPENCODE_EXPECTED_SHA256 require the tarball's SHA256 to match (auto-update
+#                           pins the resolved version; set this to pin the hash too)
 #   OPENCODE_WRAPPER_ONLY   1 = skip binary download/patch, reinstall wrapper only
+#   OPENCODE_RUN_SMOKE      1 = after the offline gates, also run a networked
+#                           `opencode run "Reply with exactly: PONG"` gate
+#                           (default 0 — needs auth + network, so an offline
+#                           phone must not look like a broken binary)
 #   OPENCODE_STANDALONE     1 (default) or 0 — inject --standalone for run/serve
 #                           (legacy name OPENCODE_V2_STANDALONE is also honored)
 #   INSTALL_NAME            wrapper name (default: opencode)
+#
+# Rollback boundary: the new binary is staged to opencode-v2-musl.bin.new,
+# smoke-tested there, and only then promoted over the current binary. The
+# previous binary is kept as opencode-v2-musl.bin.last-good with its
+# VERSION/SHA256 sidecars, so a bad upstream build restores with:
+#   cp "$PREFIX/libexec/opencode/opencode-v2-musl.bin.last-good" \
+#      "$PREFIX/libexec/opencode/opencode-v2-musl.bin"
+# Promotion gates (offline, deterministic): `opencode --version` matches the
+# expected version AND `opencode run --help` exits 0. The networked `run`
+# gate is opt-in (OPENCODE_RUN_SMOKE=1) for exactly the reason above.
 #
 # Requires: curl, tar. Reuses musl loader/libs + libresolvefix when present;
 # otherwise installs them from Alpine. Outbound HTTPS goes through the Python
@@ -63,7 +79,48 @@ ARCH="$(uname -m)"
 
 MUSL_LOADER="$PREFIX/lib/ld-musl-aarch64.so.1"
 RESOLVEFIX="$PREFIX/lib/libresolvefix.so"
-V2_BIN="$PREFIX/libexec/opencode/opencode-v2-musl.bin"
+V2_DIR="$PREFIX/libexec/opencode"
+V2_BIN="$V2_DIR/opencode-v2-musl.bin"
+# Rollback boundary artifacts (alongside the binary, never in PATH).
+V2_NEW="$V2_BIN.new"
+V2_LASTGOOD="$V2_BIN.last-good"
+VERSION_FILE="$V2_DIR/VERSION"
+SHA_FILE="$V2_DIR/SHA256"
+VERSION_LOG="$V2_DIR/versions.log"
+OPENCODE_RUN_SMOKE="${OPENCODE_RUN_SMOKE:-0}"
+
+# SHA256 of a file (sha256sum, or shasum fallback). Prints bare hex.
+sha256_of() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    sha256sum "$1" | awk '{print $1}'
+  else
+    shasum -a 256 "$1" | awk '{print $1}'
+  fi
+}
+
+# run_with_timeout SECS CMD... — timeout when available, plain exec otherwise
+# (timeout(1) exists on Termux coreutils; smoke gates must never hang the
+# unattended 6h job if a bad binary blocks on startup).
+run_with_timeout() {
+  _secs="$1"; shift
+  if command -v timeout >/dev/null 2>&1; then
+    timeout "$_secs" "$@"
+  else
+    "$@"
+  fi
+  unset _secs
+}
+
+# restore_last_good — copy .last-good back over the current binary.
+# Returns 0 on a verified restore, 1 when there is nothing to restore.
+restore_last_good() {
+  [ -f "$V2_LASTGOOD" ] || return 1
+  cp -p "$V2_LASTGOOD" "$V2_BIN"
+  chmod 755 "$V2_BIN"
+  if [ -f "$VERSION_FILE.last-good" ]; then cp -p "$VERSION_FILE.last-good" "$VERSION_FILE"; fi
+  if [ -f "$SHA_FILE.last-good" ]; then cp -p "$SHA_FILE.last-good" "$SHA_FILE"; fi
+  return 0
+}
 
 # --- Ensure musl loader + C++ libs (from Alpine) ---
 ensure_musl_libs() {
@@ -151,6 +208,13 @@ OPENCODE_VERSION="${OPENCODE_VERSION#v}"
 if [ "$OPENCODE_WRAPPER_ONLY" = "1" ]; then
   [ -x "$V2_BIN" ] || die "OPENCODE_WRAPPER_ONLY=1 but $V2_BIN is missing."
   log "Wrapper-only mode: keeping existing binary ($("$V2_BIN" --version 2>/dev/null || echo unknown))"
+  if [ "$OPENCODE_VERSION" = "latest" ]; then
+    # Gates below compare against a concrete version; read it from the
+    # binary we are keeping (or the VERSION sidecar as fallback).
+    OPENCODE_VERSION="$("$V2_BIN" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+    [ -z "$OPENCODE_VERSION" ] && [ -f "$VERSION_FILE" ] && OPENCODE_VERSION="$(cat "$VERSION_FILE")"
+    [ -n "$OPENCODE_VERSION" ] || die "Could not read kept binary's version for verification."
+  fi
 else
   # --- Download official v2 musl npm package ---
   PKG_NAME="cli-linux-arm64-musl"
@@ -178,16 +242,50 @@ else
   fi
 
   cd "$WORK"
+  # Pin the hash: record the tarball's SHA256, enforce it when pinned.
+  TARBALL_SHA256="$(sha256_of "$TARBALL")"
+  [ -n "$TARBALL_SHA256" ] || die "Could not hash downloaded tarball"
+  log "Tarball SHA256: $TARBALL_SHA256"
+  if [ -n "${OPENCODE_EXPECTED_SHA256:-}" ]; then
+    _want=$(printf '%s' "$OPENCODE_EXPECTED_SHA256" | tr 'A-F' 'a-f')
+    _got=$(printf '%s' "$TARBALL_SHA256" | tr 'A-F' 'a-f')
+    [ "$_got" = "$_want" ] || die "SHA256 mismatch: got $_got, expected $_want"
+    unset _want _got
+    log "SHA256 matches pinned value."
+  fi
   tar -xzf "$TARBALL" || die "Failed to extract npm tarball"
   V2_SRC="package/bin/opencode"
   [ -f "$V2_SRC" ] || die "Tarball did not contain package/bin/opencode"
 
-  # --- Install binary + patch interpreter ---
-  log "Installing v2 binary..."
+  # --- Stage new binary, smoke-test it, then promote ---
+  # The live $V2_BIN is untouched until the staged copy proves itself.
+  log "Staging v2 binary..."
   install -d "$PREFIX/libexec/opencode"
-  install -m 755 "$V2_SRC" "$V2_BIN"
+  rm -f "$V2_NEW"
+  install -m 755 "$V2_SRC" "$V2_NEW"
   log "Patching ELF interpreter to $MUSL_LOADER..."
-  patchelf --set-interpreter "$MUSL_LOADER" "$V2_BIN"
+  patchelf --set-interpreter "$MUSL_LOADER" "$V2_NEW"
+  log "Smoke-testing staged binary (gate 1: --version)..."
+  STAGED_VERSION="$(LD_PRELOAD="$RESOLVEFIX" LD_LIBRARY_PATH="$PREFIX/lib" \
+    run_with_timeout 60 "$V2_NEW" --version 2>&1)" \
+    || { rm -f "$V2_NEW"; die "Staged binary failed to run; live binary untouched."; }
+  echo "$STAGED_VERSION" | grep -qF "$OPENCODE_VERSION" \
+    || { rm -f "$V2_NEW"; die "Staged binary reports '$STAGED_VERSION', expected $OPENCODE_VERSION; live binary untouched."; }
+  log "Staged binary reports: $STAGED_VERSION"
+  # Promote: snapshot the live binary as last-known-good first.
+  if [ -f "$V2_BIN" ]; then
+    log "Snapshotting live binary as last-known-good..."
+    cp -p "$V2_BIN" "$V2_LASTGOOD"
+    chmod 755 "$V2_LASTGOOD"
+    [ -f "$VERSION_FILE" ] && cp -p "$VERSION_FILE" "$VERSION_FILE.last-good"
+    [ -f "$SHA_FILE" ] && cp -p "$SHA_FILE" "$SHA_FILE.last-good"
+  fi
+  mv -f "$V2_NEW" "$V2_BIN"
+  chmod 755 "$V2_BIN"
+  printf '%s\n' "$OPENCODE_VERSION" > "$VERSION_FILE"
+  printf '%s  %s-%s.tgz\n' "$TARBALL_SHA256" "$PKG_NAME" "$OPENCODE_VERSION" > "$SHA_FILE"
+  printf '%s %s %s\n' "$(date '+%F %T')" "$OPENCODE_VERSION" "$TARBALL_SHA256" >> "$VERSION_LOG"
+  log "Promoted v2 $OPENCODE_VERSION to $V2_BIN"
 fi
 
 # Proxy watchdog: cron/runit are unavailable on Termux, so the wrapper keeps
@@ -333,8 +431,45 @@ exec "$(dirname "$0")/opencode" "$@"
 SHARED
 chmod +x "$PREFIX/bin/opencode-shared"
 
-log "Done. Try: $INSTALL_NAME --version"
-"$PREFIX/bin/$INSTALL_NAME" --version
+log "Done. Verifying: $INSTALL_NAME --version"
+WRAPPER_VERSION="$("$PREFIX/bin/$INSTALL_NAME" --version 2>&1)" \
+  || WRAPPER_VERSION=""
+echo "$WRAPPER_VERSION" | grep -qF "$OPENCODE_VERSION" || {
+  warn "Installed wrapper reports '$WRAPPER_VERSION', expected $OPENCODE_VERSION."
+  if restore_last_good; then
+    warn "Rolled back to last-known-good binary."
+    "$PREFIX/bin/$INSTALL_NAME" --version 2>&1 || true
+  fi
+  die "Post-install --version gate failed."
+}
+log "Verified: $WRAPPER_VERSION"
+# Gate 2 (offline, deterministic): `run --help` proves the Node runtime
+# boots and arg parsing works — no network or auth involved.
+run_with_timeout 60 "$PREFIX/bin/$INSTALL_NAME" run --help >/dev/null 2>&1 || {
+  warn "Post-install 'opencode run --help' gate failed."
+  if restore_last_good; then
+    warn "Rolled back to last-known-good binary."
+    "$PREFIX/bin/$INSTALL_NAME" --version 2>&1 || true
+  fi
+  die "Post-install run --help gate failed."
+}
+log "Verified: opencode run --help exits 0"
+# Gate 3 (opt-in): a real networked run. Off by default — an offline phone
+# or expired auth must never look like a broken binary.
+case "$OPENCODE_RUN_SMOKE" in
+  1|true|yes)
+    log "Running opt-in networked smoke test..."
+    if ! run_with_timeout 120 "$PREFIX/bin/$INSTALL_NAME" run \
+        "Reply with exactly: PONG" 2>&1 | grep -q "PONG"; then
+      warn "Networked smoke test failed."
+      if restore_last_good; then
+        warn "Rolled back to last-known-good binary."
+      fi
+      die "Networked smoke test failed (OPENCODE_RUN_SMOKE=1)."
+    fi
+    log "Verified: networked run returned PONG"
+    ;;
+esac
 
 cat <<'MSG'
 

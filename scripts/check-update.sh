@@ -10,6 +10,14 @@
 #   ./scripts/auto-update.sh           # unattended entrypoint (this + --yes)
 #   ./scripts/check-update.sh          # check only, notify if behind (exit 2)
 #   ./scripts/check-update.sh --yes    # check + re-run install.sh if behind
+#   ./scripts/check-update.sh --rollback  # restore last-known-good binary
+#
+# Rollback boundary: --yes pins OPENCODE_VERSION to the resolved release so
+# the installer cannot drift to a newer upstream build mid-run, and the
+# installer itself stages the new binary (.new), smoke-tests it (--version
+# + `run --help`), and only then promotes it — keeping the previous binary
+# as .last-good. If post-install verification fails here, the last-good
+# binary is restored automatically.
 #
 # Exit codes: 0 = up to date, 1 = error, 2 = update available.
 #
@@ -30,11 +38,14 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 INSTALLER="$SCRIPT_DIR/../install.sh"
 CMD=opencode
 UPDATE_API="${UPDATE_API:-https://opencode.ai/update/api/latest/cli/npm}"
+LIBEXEC="${PREFIX:-/data/data/com.termux/files/usr}/libexec/opencode"
 APPLY=0
+ROLLBACK=0
 
 for arg in "$@"; do
   case "$arg" in
     --yes) APPLY=1 ;;
+    --rollback) ROLLBACK=1 ;;
     -h|--help)
       sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
       exit 0
@@ -42,6 +53,20 @@ for arg in "$@"; do
     *) echo "Unknown argument: $arg (try --help)" >&2; exit 1 ;;
   esac
 done
+
+if [ "$ROLLBACK" -eq 1 ]; then
+  LASTGOOD="$LIBEXEC/opencode-v2-musl.bin.last-good"
+  [ -f "$LASTGOOD" ] || { echo "No last-known-good binary ($LASTGOOD)." >&2; exit 1; }
+  cp -p "$LASTGOOD" "$LIBEXEC/opencode-v2-musl.bin"
+  chmod 755 "$LIBEXEC/opencode-v2-musl.bin"
+  [ -f "$LIBEXEC/VERSION.last-good" ] && cp -p "$LIBEXEC/VERSION.last-good" "$LIBEXEC/VERSION"
+  [ -f "$LIBEXEC/SHA256.last-good" ] && cp -p "$LIBEXEC/SHA256.last-good" "$LIBEXEC/SHA256"
+  restored="$("$CMD" --version 2>/dev/null || echo FAILED)"
+  echo "Restored last-known-good binary: $restored"
+  echo "$restored" | grep -qE '[0-9]+\.[0-9]+\.[0-9]+' || { echo "Restored binary fails --version." >&2; exit 1; }
+  notify "opencode rolled back to $restored."
+  exit 0
+fi
 
 notify() {
   if command -v termux-notification >/dev/null 2>&1; then
@@ -104,15 +129,34 @@ fi
 if [ "$APPLY" -eq 1 ]; then
   notify "opencode $installed -> $latest available. Auto-updating..."
   if [ -x "$INSTALLER" ]; then
-    echo "Applying update via $INSTALLER..."
-    "$INSTALLER"
-    rc=$?
-    if [ $rc -eq 0 ]; then
-      notify "opencode updated to $latest."
+    echo "Applying update via $INSTALLER (pinned to $latest)..."
+    # Pin the resolved version: the installer must install exactly this
+    # release, not whatever "latest" points at by the time it runs.
+    if OPENCODE_VERSION="$latest" "$INSTALLER"; then
+      # Post-install verification (defense in depth — the installer gates
+      # promotion itself, this catches anything that broke after promote).
+      new_version="$("$CMD" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+      if [ "$new_version" = "$latest" ] && "$CMD" run --help >/dev/null 2>&1; then
+        notify "opencode updated to $latest."
+        exit 0
+      fi
+      echo "Post-install verification failed (reports '${new_version:-nothing}')." >&2
     else
-      notify "opencode auto-update failed (exit $rc). Re-run $INSTALLER manually."
+      echo "Installer failed; live binary untouched (staged promote)." >&2
     fi
-    exit $rc
+    # Restore the last-known-good binary when anything above failed.
+    LASTGOOD="$LIBEXEC/opencode-v2-musl.bin.last-good"
+    if [ -f "$LASTGOOD" ]; then
+      echo "Restoring last-known-good binary..." >&2
+      cp -p "$LASTGOOD" "$LIBEXEC/opencode-v2-musl.bin"
+      chmod 755 "$LIBEXEC/opencode-v2-musl.bin"
+      [ -f "$LIBEXEC/VERSION.last-good" ] && cp -p "$LIBEXEC/VERSION.last-good" "$LIBEXEC/VERSION"
+      restored="$("$CMD" --version 2>/dev/null || echo FAILED)"
+      notify "opencode auto-update failed; rolled back to $restored."
+    else
+      notify "opencode auto-update failed. Re-run $INSTALLER manually."
+    fi
+    exit 1
   else
     echo "Cannot auto-apply: $INSTALLER not found next to this script." >&2
     echo "Update manually: sh install.sh" >&2

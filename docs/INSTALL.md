@@ -105,11 +105,14 @@ termux-job-scheduler --job-id 7802 --period-ms 21600000 \
 
 The job checks the npm channel and re-runs `install.sh` only when behind; never downgrades. Notifications fire on success or failure — no manual step.
 
+Rollback boundary: `check-update.sh --yes` pins `OPENCODE_VERSION` to the resolved release (no mid-run drift), and `install.sh` stages the new binary as `opencode-v2-musl.bin.new`, smoke-tests it there — `--version` must report the pinned version and `opencode run --help` must exit 0, both offline and deterministic — then promotes it, keeping the previous binary as `opencode-v2-musl.bin.last-good` with `VERSION`/`SHA256` sidecars plus an append-only `versions.log`. The tarball SHA256 is logged and recorded every install, and enforced when `OPENCODE_EXPECTED_SHA256` is set. If post-install verification fails, the last-good binary is restored automatically. A real networked `opencode run` gate is available opt-in (`OPENCODE_RUN_SMOKE=1`) but stays off by default: an offline phone or expired auth must not look like a broken binary.
+
 Manual options:
 
 ```sh
-./scripts/check-update.sh          # check only
-./scripts/check-update.sh --yes    # apply via install.sh
+./scripts/check-update.sh            # check only
+./scripts/check-update.sh --yes      # apply via install.sh (pinned + staged)
+./scripts/check-update.sh --rollback # restore last-known-good binary
 ```
 
 If a v1-era job (7801/7802) still points at the archived `opencode-termux-musl` repo, reschedule it with the path above — the v1 script checks the v1 GitHub tag channel and exits "nothing to do" forever once `opencode` reports 2.x. When the auto-update job is _not_ scheduled, `check-update.sh` says so explicitly instead of nudging a manual install.sh run.
