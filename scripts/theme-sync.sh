@@ -11,7 +11,11 @@
 # What it does: sets theme.mode in ~/.config/opencode/cli.json to "light"
 # between LIGHT_START (default 07:00) and LIGHT_END (default 19:00) local
 # time, otherwise "dark". Theme NAME is preserved; only "mode" is rewritten
-# (with a .bak-theme-sync backup on change). It does NOT try to read the
+# (with a .bak-theme-sync backup on change). It ALSO flips the Termux
+# terminal background in ~/.termux/colors.properties to match (white by day,
+# black by night) and runs termux-reload-settings, so the resize gap behind
+# the TUI is the same color as the theme — no black flash in light mode.
+# It does NOT try to read the
 # Android UiMode — Termux is denied without privileged permission:
 #   settings get secure ui_night_mode -> INTERACT_ACROSS_USERS denied
 #   cmd uimode night                  -> MODIFY_DAY_NIGHT_MODE denied
@@ -23,13 +27,19 @@
 #   sh scripts/theme-sync.sh --status        # current config + computed mode
 #   sh scripts/theme-sync.sh --light         # force light mode now
 #   sh scripts/theme-sync.sh --dark          # force dark mode now
-#   sh scripts/theme-sync.sh --system        # restore mode "system"
+#   sh scripts/theme-sync.sh --system        # restore mode "system" (termux left alone)
 #   sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30
+#   sh scripts/theme-sync.sh --no-termux     # opencode mode only, leave Termux colors alone
 #
 # Env knobs:
 #   THEME_SYNC_LIGHT_START=07:00  THEME_SYNC_LIGHT_END=19:00
 #   THEME_SYNC_CONFIG=/path/to/cli.json  (default ~/.config/opencode/cli.json)
 #   THEME_SYNC_NOTIFY=1  (fire a termux-notification on change)
+#   THEME_SYNC_TERMUX=1|0  (default 1 — also flip Termux background)
+#   THEME_SYNC_TERMUX_COLORS=/path/to/colors.properties
+#     (default ~/.termux/colors.properties)
+#   THEME_SYNC_LIGHT_BG=#ffffff  THEME_SYNC_LIGHT_FG=#1a1a1a
+#   THEME_SYNC_DARK_BG=#000000  THEME_SYNC_DARK_FG=#ffffff
 #
 # Unattended (Termux:API — schedule once; uses job id 7803 to avoid the
 # auto-update job 7802):
@@ -50,6 +60,12 @@ LIGHT_START="${THEME_SYNC_LIGHT_START:-07:00}"
 LIGHT_END="${THEME_SYNC_LIGHT_END:-19:00}"
 CFG="${THEME_SYNC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode/cli.json}"
 NOTIFY="${THEME_SYNC_NOTIFY:-0}"
+DO_TERMUX="${THEME_SYNC_TERMUX:-1}"
+TERMCOLORS="${THEME_SYNC_TERMUX_COLORS:-$HOME/.termux/colors.properties}"
+LIGHT_BG="${THEME_SYNC_LIGHT_BG:-#ffffff}"
+LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#1a1a1a}"
+DARK_BG="${THEME_SYNC_DARK_BG:-#000000}"
+DARK_FG="${THEME_SYNC_DARK_FG:-#ffffff}"
 
 FORCE=""
 CHECK=0
@@ -62,17 +78,20 @@ for arg in "$@"; do
     --system) FORCE="system" ;;
     --check) CHECK=1 ;;
     --status) STATUS_ONLY=1 ;;
+    --termux) DO_TERMUX=1 ;;
+    --no-termux) DO_TERMUX=0 ;;
     --light-start=*) LIGHT_START="${arg#--light-start=}" ;;
     --light-end=*) LIGHT_END="${arg#--light-end=}" ;;
     --config=*) CFG="${arg#--config=}" ;;
+    --termux-colors=*) TERMCOLORS="${arg#--termux-colors=}" ;;
     --notify) NOTIFY=1 ;;
     -h|--help)
       sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
       exit 0
       ;;
-    --light-start|--light-end|--config)
+    --light-start|--light-end|--config|--termux-colors)
       echo "error: $arg needs a value — use $arg=VALUE" >&2; exit 1 ;;
-    --light|--dark|--system|--check|--status|--notify)
+    --light|--dark|--system|--check|--status|--notify|--termux|--no-termux)
       ;; # handled above (unreachable, kept for clarity)
     *)
       # positional HH:MM pair: theme-sync.sh [LIGHT_START] [LIGHT_END]
@@ -125,25 +144,78 @@ fi
 CURRENT="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("theme",{}).get("mode","?"))' "$CFG" 2>/dev/null || echo "?")"
 NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("theme",{}).get("name","?"))' "$CFG" 2>/dev/null || echo "?")"
 
+# --- Termux terminal background (kills the resize flash) ---
+# Only background/foreground are flipped; the palette is left alone.
+# --system leaves Termux alone (mode "system" follows whatever is set).
+TERM_BG=""
+TERM_WANT_BG=""
+TERM_WANT_FG=""
+if [ "$DO_TERMUX" = "1" ] && [ "$FORCE" != "system" ] && [ -f "$TERMCOLORS" ]; then
+  TERM_BG="$(sed -n 's/^background=//p' "$TERMCOLORS" | head -1)"
+  if [ "$WANT" = "light" ]; then
+    TERM_WANT_BG="$LIGHT_BG"; TERM_WANT_FG="$LIGHT_FG"
+  else
+    TERM_WANT_BG="$DARK_BG"; TERM_WANT_FG="$DARK_FG"
+  fi
+fi
+TERM_NEED=0
+if [ -n "$TERM_WANT_BG" ] && [ "$TERM_BG" != "$TERM_WANT_BG" ]; then TERM_NEED=1; fi
+
+apply_termux() {
+  # $1 = bg, $2 = fg
+  [ -f "$TERMCOLORS" ] || return 0
+  cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
+  if grep -q '^background=' "$TERMCOLORS"; then
+    sed -i "s|^background=.*|background=$1|" "$TERMCOLORS"
+  else
+    printf 'background=%s\n' "$1" >> "$TERMCOLORS"
+  fi
+  if grep -q '^foreground=' "$TERMCOLORS"; then
+    sed -i "s|^foreground=.*|foreground=$2|" "$TERMCOLORS"
+  else
+    printf 'foreground=%s\n' "$2" >> "$TERMCOLORS"
+  fi
+  echo "theme-sync: termux background $TERM_BG -> $1 (backup: $TERMCOLORS.bak-theme-sync)"
+  if command -v termux-reload-settings >/dev/null 2>&1; then
+    termux-reload-settings 2>/dev/null || true
+  fi
+}
+
 if [ "$STATUS_ONLY" -eq 1 ]; then
   echo "config: $CFG"
   echo "theme: $NAME / mode: $CURRENT (want: $WANT, light window $LIGHT_START-$LIGHT_END)"
+  if [ "$DO_TERMUX" = "1" ]; then
+    if [ -n "$TERM_WANT_BG" ]; then
+      echo "termux: $TERMCOLORS background $TERM_BG (want: $TERM_WANT_BG)"
+    else
+      echo "termux: skipped (missing file or --system)"
+    fi
+  else
+    echo "termux: disabled (--no-termux)"
+  fi
   exit 0
 fi
 
-if [ "$CURRENT" = "$WANT" ]; then
-  echo "theme-sync: already $WANT ($NAME) — nothing to do."
+NEED_OPENCODE=0
+[ "$CURRENT" != "$WANT" ] && NEED_OPENCODE=1
+
+if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ]; then
+  echo "theme-sync: already $WANT ($NAME)"
+  [ "$DO_TERMUX" = "1" ] && [ -n "$TERM_WANT_BG" ] && echo "theme-sync: termux background already $TERM_BG — nothing to do."
   exit 0
 fi
 
 if [ "$CHECK" -eq 1 ]; then
-  echo "theme-sync: would set mode $CURRENT -> $WANT ($NAME, light window $LIGHT_START-$LIGHT_END)."
+  [ "$NEED_OPENCODE" -eq 1 ] && echo "theme-sync: would set mode $CURRENT -> $WANT ($NAME, light window $LIGHT_START-$LIGHT_END)."
+  # shellcheck disable=SC2034
+  if [ "$TERM_NEED" -eq 1 ]; then echo "theme-sync: would set termux background $TERM_BG -> $TERM_WANT_BG."; fi
   exit 2
 fi
 
-cp "$CFG" "$CFG.bak-theme-sync"
+if [ "$NEED_OPENCODE" -eq 1 ]; then
+  cp "$CFG" "$CFG.bak-theme-sync"
 
-WANT_EXPORT="$WANT" python3 - "$CFG" <<'PY'
+  WANT_EXPORT="$WANT" python3 - "$CFG" <<'PY'
 import json, os, sys
 path = sys.argv[1]
 want = os.environ["WANT_EXPORT"]
@@ -160,6 +232,11 @@ with open(path, "w") as f:
     f.write("\n")
 print(f"theme-sync: mode {want} written to {path} (backup: {path}.bak-theme-sync)")
 PY
+fi
+
+if [ "$TERM_NEED" -eq 1 ]; then
+  apply_termux "$TERM_WANT_BG" "$TERM_WANT_FG"
+fi
 
 if [ "$NOTIFY" = "1" ] && command -v termux-notification >/dev/null 2>&1; then
   termux-notification --title "opencode theme" --content "Switched to $WANT mode ($NAME)." 2>/dev/null || true

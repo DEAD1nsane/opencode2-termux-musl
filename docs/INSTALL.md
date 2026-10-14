@@ -84,7 +84,11 @@ sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30
 ```
 
 Only `theme.mode` is rewritten (name preserved, `.bak-theme-sync` backup).
-Takes effect on next TUI launch. Hourly unattended sync (job id 7803, clear of
+The Termux terminal background in `~/.termux/colors.properties` is flipped to
+match (white `#ffffff` by day, black `#000000` by night, `termux-reload-settings`
+run automatically) so the resize gap behind the TUI is the same color — no
+black flash in light mode. Opt out with `--no-termux` (`THEME_SYNC_TERMUX=0`).
+Takes effect on next TUI launch (Termux colors apply immediately). Hourly unattended sync (job id 7803, clear of
 the auto-update job 7802):
 
 ```sh
