@@ -55,9 +55,9 @@ opencode run "say hi"
 Useful knobs:
 
 ```sh
-OPENCODE_VERSION=2.0.21 sh install.sh        # pin a version
+OPENCODE_VERSION=2.0.30 sh install.sh        # pin a version
 OPENCODE_WRAPPER_ONLY=1 sh install.sh        # refresh wrapper only, no download
-OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.21.tgz sh install.sh  # offline
+OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.30.tgz sh install.sh  # offline
 OPENCODE_STANDALONE=0 sh install.sh          # default to shared-service mode
 ```
 
@@ -65,9 +65,9 @@ Full details, including migration from v1, are in [docs/INSTALL.md](docs/INSTALL
 
 ## Verify
 
-| Check         | Command                                           | Status (2.0.21 on Pixel 10)                           |
+| Check         | Command                                           | Status (2.0.30 on Pixel 10)                           |
 | ------------- | ------------------------------------------------- | ----------------------------------------------------- |
-| Version       | `opencode --version`                              | `opencode v2.0.21`                                    |
+| Version       | `opencode --version`                              | `opencode v2.0.30`                                    |
 | DNS + API     | `opencode run "Reply with exactly: PONG"`         | works via Python proxy                                |
 | Models / auth | `opencode models`, `opencode auth list`           | OpenCode Go key stored                                |
 | Themes        | 8 native v2 AMOLED themes in [`themes/`](themes/) | copy + `/themes`                                      |
@@ -181,7 +181,7 @@ sh scripts/remove-v1.sh       # deletes v1 binary + opencode2 leftovers (~350 MB
 
 ## Tested on
 
-- Pixel 10 (Android 17, Termux 0.119, aarch64) — OpenCode v2.0.21 as `opencode`: TUI, `run`, shared service, themes, MCP servers (Railway, GitHub, Upstash, Chrome DevTools), and the v2 plugin API all verified on-device.
+- Pixel 10 (Android 17, Termux 0.119, aarch64) — OpenCode v2.0.30 as `opencode`: TUI, `run`, shared service, themes, MCP servers (Railway, GitHub, Upstash, Chrome DevTools), and the v2 plugin API all verified on-device.
 
 ## Credits
 

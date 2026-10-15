@@ -106,6 +106,6 @@ Formatter needs one-time `sh scripts/enable-formatter.sh` (prettier shebang can'
 
 # 📱 Tested On:
 
-Pixel 10, Android 17, Termux 0.119, OpenCode v2.0.29 as `opencode`: TUI, `run`, shared-service, MCP (Railway/GitHub/Upstash/Chrome DevTools), v2 plugin API.
+Pixel 10, Android 17, Termux 0.119, OpenCode v2.0.30 as `opencode`: TUI, `run`, shared-service, MCP (Railway/GitHub/Upstash/Chrome DevTools), v2 plugin API.
 
 ### Please any comments below 👇🏼

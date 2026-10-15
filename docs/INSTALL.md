@@ -28,11 +28,11 @@ The installer is idempotent — re-running it refreshes the binary (default) or,
 ## Versions, pinning, offline
 
 ```sh
-OPENCODE_VERSION=2.0.21 sh install.sh       # pin
+OPENCODE_VERSION=2.0.30 sh install.sh       # pin
 # pre-download the tarball, then:
-curl -L -C - -o cli-linux-arm64-musl-2.0.21.tgz \
-  https://registry.npmjs.org/@opencode/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.0.21.tgz
-OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.21.tgz sh install.sh
+curl -L -C - -o cli-linux-arm64-musl-2.0.30.tgz \
+  https://registry.npmjs.org/@opencode/cli-linux-arm64-musl/-/cli-linux-arm64-musl-2.0.30.tgz
+OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.30.tgz sh install.sh
 ```
 
 ## Migrating from v1 or side-by-side
@@ -149,7 +149,13 @@ Another process owns the port; the wrapper skips starting `proxy.py` when any `p
 ```sh
 rm -f "$PREFIX/bin/opencode" "$PREFIX/bin/opencode-shared" \
       "$PREFIX/libexec/opencode/opencode-v2-musl.bin" \
-      "$PREFIX/libexec/opencode/proxy.py"
+      "$PREFIX/libexec/opencode/opencode-v2-musl.bin.new" \
+      "$PREFIX/libexec/opencode/opencode-v2-musl.bin.last-good" \
+      "$PREFIX/libexec/opencode/proxy.py" \
+      "$PREFIX/libexec/opencode/proxy-watchdog.sh" \
+      "$PREFIX/libexec/opencode/VERSION" "$PREFIX/libexec/opencode/VERSION.last-good" \
+      "$PREFIX/libexec/opencode/SHA256" "$PREFIX/libexec/opencode/SHA256.last-good" \
+      "$PREFIX/libexec/opencode/versions.log"
 # musl loader/libs/libresolvefix are shared; remove only if nothing else needs them:
 # rm -f "$PREFIX/lib/ld-musl-aarch64.so.1" "$PREFIX/lib/libstdc++.so.6"* \
 #       "$PREFIX/lib/libgcc_s.so.1" "$PREFIX/lib/libresolvefix.so"

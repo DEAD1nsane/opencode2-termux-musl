@@ -12,10 +12,10 @@
 #   OPENCODE_WRAPPER_ONLY=1 sh install.sh   # refresh wrapper only, no download
 #
 # Pin a version:
-#   OPENCODE_VERSION=2.0.21 sh install.sh
+#   OPENCODE_VERSION=2.0.30 sh install.sh
 #
 # Offline tarball:
-#   OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.21.tgz sh install.sh
+#   OPENCODE_TARBALL_PATH=./cli-linux-arm64-musl-2.0.30.tgz sh install.sh
 #
 # Environment:
 #   OPENCODE_VERSION        pin version (default: latest from opencode.ai)
@@ -299,6 +299,15 @@ if [ -f "$SCRIPT_DIR/scripts/proxy-watchdog.sh" ]; then
   install -m 700 "$SCRIPT_DIR/scripts/proxy-watchdog.sh" "$PREFIX/libexec/opencode/proxy-watchdog.sh"
 elif [ -f "$SCRIPT_DIR/proxy-watchdog.sh" ]; then
   install -m 700 "$SCRIPT_DIR/proxy-watchdog.sh" "$PREFIX/libexec/opencode/proxy-watchdog.sh"
+fi
+
+# Python proxy: the wrapper only autostarts it when this file exists
+# (see wrapper guard below), so it must be deployed alongside the watchdog.
+# Kept outside the binary-download guard so WRAPPER_ONLY refreshes it too.
+if [ -f "$SCRIPT_DIR/scripts/proxy.py" ]; then
+  install -m 644 "$SCRIPT_DIR/scripts/proxy.py" "$PREFIX/libexec/opencode/proxy.py"
+elif [ -f "$SCRIPT_DIR/proxy.py" ]; then
+  install -m 644 "$SCRIPT_DIR/proxy.py" "$PREFIX/libexec/opencode/proxy.py"
 fi
 
 # --- Wrapper ---

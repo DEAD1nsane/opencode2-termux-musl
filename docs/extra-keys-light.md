@@ -18,7 +18,7 @@ dark-on-light and points the toolbar container at the theme attr:
 ## Build
 
 Actions → "Build patched Termux APK" → Run workflow (default
-`v0.119.0`). Download the `termux-patched-light-extrakeys` artifact
+`v0.119.0-beta.3`). Download the `termux-patched-light-extrakeys` artifact
 (`app-debug.apk`).
 
 Debug-signed, so Android treats it as a different app from F-Droid /
