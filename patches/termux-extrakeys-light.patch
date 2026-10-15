@@ -30,3 +30,15 @@ diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes
      </style>
  
  </resources>
+diff --git a/app/src/main/res/layout/view_terminal_toolbar_text_input.xml b/app/src/main/res/layout/view_terminal_toolbar_text_input.xml
+--- a/app/src/main/res/layout/view_terminal_toolbar_text_input.xml
++++ b/app/src/main/res/layout/view_terminal_toolbar_text_input.xml
+@@ -8,7 +8,7 @@
+     android:maxLines="1"
+     android:inputType="text"
+     android:importantForAutofill="no"
+-    android:textColor="@android:color/white"
++    android:textColor="?attr/extraKeysButtonTextColor"
+     android:textColorHighlight="@android:color/darker_gray"
+     android:paddingTop="0dp"
+     android:textCursorDrawable="@null"
