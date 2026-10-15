@@ -6,7 +6,7 @@ on:
       termux_ref:
         description: 'termux-app git ref (tag/branch/SHA)'
         required: false
-        default: 'v0.119.0'
+        default: 'v0.119.0-beta.3'
   push:
     paths:
       - 'patches/termux-extrakeys-light.patch'
@@ -29,7 +29,7 @@ jobs:
           git clone --recursive https://github.com/termux/termux-app.git termux-app
           cd termux-app
           git fetch --tags
-          git checkout "${{ inputs.termux_ref || 'v0.119.0' }}"
+          git checkout "${{ inputs.termux_ref || 'v0.119.0-beta.3' }}"
           git submodule update --init --recursive
 
       - name: Apply light extra-keys patch
