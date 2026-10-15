@@ -131,7 +131,7 @@ This installs prettier globally via Termux npm and points opencode at `node <pre
 
 ## Updating
 
-Updates are unattended: schedule the job once (checks every 6h) and forget it.
+Updates are unattended: enable the periodic job once (Android fires it roughly every 6h — not at a fixed hour) and forget it.
 
 ```sh
 termux-job-scheduler --job-id 7802 --period-ms 21600000 \
@@ -139,7 +139,7 @@ termux-job-scheduler --job-id 7802 --period-ms 21600000 \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/auto-update.sh"
 ```
 
-The job (needs the Termux:API app — any network, survives reboot) checks the npm channel and re-runs `install.sh` only when behind; it never downgrades. You get a notification on success or failure, nothing to do manually. Runs are logged to `~/.opencode-auto-update.log`.
+The job (needs the Termux:API app — any network, survives reboot) checks the npm channel and re-runs `install.sh` only when behind; it never downgrades. You get a notification on success or failure (failures name the stuck version and retry automatically on the next run — nothing to do manually). Runs are logged to `~/.opencode-auto-update.log`, and the last outcome is always in `~/.opencode-update-status` (`./scripts/check-update.sh --status` shows status + job state + recent log).
 
 Rollback boundary: every update stages the new binary to `opencode-v2-musl.bin.new`, smoke-tests it there (`--version` must match the pinned release, `run --help` must exit 0), and only then promotes it — the previous binary is kept as `opencode-v2-musl.bin.last-good` with `VERSION`/`SHA256` sidecars. A bad upstream build therefore never overwrites your only working copy. The tarball SHA256 is logged and recorded each install, and enforced when `OPENCODE_EXPECTED_SHA256` is set. If you ever need to go back by hand:
 
@@ -151,13 +151,14 @@ Manual options, if you ever need them:
 
 ```sh
 ./scripts/check-update.sh          # check only (exit 2 + notification if behind)
+./scripts/check-update.sh --status # last-run status + periodic-job state + recent log
 ./scripts/check-update.sh --yes    # check + re-run install.sh if behind
 ./scripts/check-update.sh --rollback  # restore last-known-good binary
 ```
 
 v2 updates come from the npm channel only; the script compares against `opencode.ai/update/api/latest/cli/npm`.
 
-Migrating the v1-era job (7801/7802 pointed at the archived `opencode-termux-musl` repo): reschedule the same job id with the path above — the v1 script compares against v1 GitHub tags and silently exits "nothing to do" once `opencode` reports 2.x.
+Migrating the v1-era job (7801/7802 pointed at the archived `opencode-termux-musl` repo): re-enable the same job id with the path above — the v1 script compares against v1 GitHub tags and silently exits "nothing to do" once `opencode` reports 2.x.
 
 ## Migrating from v1 / side-by-side
 

@@ -42,6 +42,7 @@ opencode run "say hi"
 
 ```sh
 ./scripts/check-update.sh              # check only, Termux notification if behind
+./scripts/check-update.sh --status     # last-run status + periodic-job state
 ./scripts/check-update.sh --yes        # update now: version pinned, staged, smoke-tested
 ./scripts/check-update.sh --rollback   # restore last-known-good binary if upstream ships a bad build
 ```

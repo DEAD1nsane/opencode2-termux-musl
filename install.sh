@@ -126,11 +126,11 @@ restore_last_good() {
 ensure_musl_libs() {
   [ -x "$MUSL_LOADER" ] && [ -e "$PREFIX/lib/libstdc++.so.6" ] && [ -e "$PREFIX/lib/libgcc_s.so.1" ] && return 0
   log "Musl libs missing — installing Alpine musl + libstdc++/libgcc..."
-  ALPINE_VERSION=$(curl -fsSL "https://dl-cdn.alpinelinux.org/alpine/" \
+  ALPINE_VERSION=$(curl -fsSL --connect-timeout 15 --max-time 60 --retry 3 --retry-delay 5 --retry-all-errors "https://dl-cdn.alpinelinux.org/alpine/" \
     | grep -oE 'v[0-9]+\.[0-9]+/' | sort -uV | tail -1 | tr -d /)
   [ -n "$ALPINE_VERSION" ] || die "Could not determine latest Alpine version."
   ALPINE_BASE="https://dl-cdn.alpinelinux.org/alpine/$ALPINE_VERSION/main/aarch64"
-  ALPINE_INDEX=$(curl -fsSL "$ALPINE_BASE/" \
+  ALPINE_INDEX=$(curl -fsSL --connect-timeout 15 --max-time 60 --retry 3 --retry-delay 5 --retry-all-errors "$ALPINE_BASE/" \
     | grep -oE '(musl|libstdc\+\+|libgcc)-[0-9][^"<]*\.apk' | sort -uV)
   MUSL_PKG=$(printf '%s\n' "$ALPINE_INDEX" | grep -E '^musl-' | tail -1)
   LIBSTDC_PKG=$(printf '%s\n' "$ALPINE_INDEX" | grep -E '^libstdc\+\+-' | tail -1)
@@ -138,9 +138,9 @@ ensure_musl_libs() {
   [ -n "$MUSL_PKG" ] && [ -n "$LIBSTDC_PKG" ] && [ -n "$LIBGCC_PKG" ] \
     || die "Could not find Alpine musl packages."
   cd "$WORK"
-  curl -fL --progress-bar -o "$MUSL_PKG" "$ALPINE_BASE/$MUSL_PKG" || die "musl download failed"
-  curl -fL --progress-bar -o "$LIBSTDC_PKG" "$ALPINE_BASE/$LIBSTDC_PKG" || die "libstdc++ download failed"
-  curl -fL --progress-bar -o "$LIBGCC_PKG" "$ALPINE_BASE/$LIBGCC_PKG" || die "libgcc download failed"
+  curl -fL --retry 5 --retry-delay 3 --retry-all-errors --connect-timeout 20 --max-time 300 --progress-bar -o "$MUSL_PKG" "$ALPINE_BASE/$MUSL_PKG" || die "musl download failed"
+  curl -fL --retry 5 --retry-delay 3 --retry-all-errors --connect-timeout 20 --max-time 300 --progress-bar -o "$LIBSTDC_PKG" "$ALPINE_BASE/$LIBSTDC_PKG" || die "libstdc++ download failed"
+  curl -fL --retry 5 --retry-delay 3 --retry-all-errors --connect-timeout 20 --max-time 300 --progress-bar -o "$LIBGCC_PKG" "$ALPINE_BASE/$LIBGCC_PKG" || die "libgcc download failed"
   mkdir -p musl-libs
   for pkg in "$MUSL_PKG" "$LIBSTDC_PKG" "$LIBGCC_PKG"; do
     (cd musl-libs && tar -xzf "../$pkg") || die "Failed to extract $pkg"
@@ -168,7 +168,7 @@ ensure_resolvefix() {
   elif [ -f "$SCRIPT_DIR/libresolvefix.c" ]; then
     cp "$SCRIPT_DIR/libresolvefix.c" "$SRC"
   else
-    curl -fsSL -o "$SRC" \
+    curl -fsSL --connect-timeout 15 --max-time 120 --retry 3 --retry-delay 5 --retry-all-errors -o "$SRC" \
       "https://raw.githubusercontent.com/DEAD1nsane/opencode2-termux-musl/master/scripts/libresolvefix.c" \
       || die "Could not download libresolvefix.c"
   fi
@@ -192,13 +192,13 @@ ensure_patchelf
 # --- Resolve version from official update API (v2 is npm-only) ---
 if [ "$OPENCODE_VERSION" = "latest" ]; then
   log "Resolving latest OpenCode v2 version..."
-  META=$(curl -fsSL "$UPDATE_API" || true)
+  META=$(curl -fsSL --connect-timeout 15 --max-time 60 --retry 3 --retry-delay 5 --retry-all-errors "$UPDATE_API" || true)
   OPENCODE_VERSION=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
   # Fall back to the npm registry when the opencode.ai endpoint is down —
   # /latest has the same JSON shape ({"version":"x.y.z",...}).
   if [ -z "$OPENCODE_VERSION" ]; then
     log "Primary update API unreachable, trying npm registry..."
-    META=$(curl -fsSL "https://registry.npmjs.org/@opencode%2Fcli/latest" || true)
+    META=$(curl -fsSL --connect-timeout 15 --max-time 60 --retry 3 --retry-delay 5 --retry-all-errors "https://registry.npmjs.org/@opencode%2Fcli/latest" || true)
     OPENCODE_VERSION=$(printf '%s' "$META" | sed -n 's/.*"version":"\([^"]*\)".*/\1/p')
   fi
   [ -n "$OPENCODE_VERSION" ] || die "Could not resolve v2 version from $UPDATE_API"
@@ -230,10 +230,12 @@ else
     # Progress meter only on a real terminal: under the unattended job
     # stderr lands in auto-update's log, where every \r frame appends.
     if [ -t 2 ]; then PROGRESS="--progress-bar"; else PROGRESS="--no-progress-meter"; fi
-    # Retry + resume: an 84MB tarball on mobile networks commonly dies
-    # mid-transfer (curl 56 SSL EOF); without this the unattended job
-    # fails silently and never converges on the new version.
-    if ! curl -fL --retry 5 --retry-delay 3 --retry-all-errors -C - \
+    # Retry + resume + time-boxed: an 84MB tarball on mobile networks
+    # commonly dies mid-transfer (curl 56 SSL EOF) or hangs on a dead
+    # connection; without bounds the periodic job is killed with no exit
+    # line and the failure stays silent until the next run converges.
+    if ! curl -fL --retry 5 --retry-delay 3 --retry-all-errors \
+        --connect-timeout 20 --max-time 900 -C - \
         $PROGRESS -o "$WORK/$TARBALL" "$URL"; then
       log "Hint: download manually, then re-run with OPENCODE_TARBALL_PATH:"
       log "  curl -L -C - -o $TARBALL $URL"
