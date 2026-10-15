@@ -1,0 +1,65 @@
+name: Build patched Termux APK (light extra-keys)
+
+on:
+  workflow_dispatch:
+    inputs:
+      termux_ref:
+        description: 'termux-app git ref (tag/branch/SHA)'
+        required: false
+        default: 'v0.119.0'
+  push:
+    paths:
+      - 'patches/termux-extrakeys-light.patch'
+      - '.github/workflows/build-termux-patched.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out this repo (patch source)
+        uses: actions/checkout@v4
+        with:
+          path: self
+
+      - name: Clone termux-app
+        run: |
+          git clone --recursive https://github.com/termux/termux-app.git termux-app
+          cd termux-app
+          git fetch --tags
+          git checkout "${{ inputs.termux_ref || 'v0.119.0' }}"
+          git submodule update --init --recursive
+
+      - name: Apply light extra-keys patch
+        run: |
+          cd termux-app
+          git apply --verbose ../self/patches/termux-extrakeys-light.patch
+          git diff --stat
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept licences, install platform + build-tools
+        run: |
+          yes | sdkmanager --licenses >/dev/null
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Build debug APK
+        run: |
+          cd termux-app
+          ./gradlew :app:assembleDebug --no-daemon
+          ls -lh app/build/outputs/apk/debug/
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: termux-patched-light-extrakeys
+          path: termux-app/app/build/outputs/apk/debug/app-debug.apk

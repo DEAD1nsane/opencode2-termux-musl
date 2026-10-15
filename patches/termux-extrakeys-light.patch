@@ -1,0 +1,32 @@
+diff --git a/app/src/main/res/layout/activity_termux.xml b/app/src/main/res/layout/activity_termux.xml
+--- a/app/src/main/res/layout/activity_termux.xml
++++ b/app/src/main/res/layout/activity_termux.xml
+@@ -100,7 +100,7 @@
+             android:visibility="gone"
+             android:layout_width="match_parent"
+             android:layout_height="37.5dp"
+-            android:background="@color/black"
++            android:background="?attr/extraKeysButtonBackgroundColor"
+             android:layout_alignParentBottom="true" />
+ 
+     </RelativeLayout>
+diff --git a/app/src/main/res/values/themes.xml b/app/src/main/res/values/themes.xml
+--- a/app/src/main/res/values/themes.xml
++++ b/app/src/main/res/values/themes.xml
+@@ -30,10 +30,10 @@
+         <item name="termuxActivityDrawerBackground">@color/white</item>
+         <item name="termuxActivityDrawerImageTint">@color/black</item>
+ 
+-        <!-- Extra keys colors. -->
+-        <item name="extraKeysButtonTextColor">@color/white</item>
+-        <item name="extraKeysButtonActiveTextColor">@color/red_400</item>
+-        <item name="extraKeysButtonBackgroundColor">@color/black</item>
+-        <item name="extraKeysButtonActiveBackgroundColor">@color/grey_500</item>
++        <!-- Extra keys colors (light): dark-on-light to match light terminal. -->
++        <item name="extraKeysButtonTextColor">@color/black</item>
++        <item name="extraKeysButtonActiveTextColor">@color/red_800</item>
++        <item name="extraKeysButtonBackgroundColor">@color/white</item>
++        <item name="extraKeysButtonActiveBackgroundColor">@color/grey_400</item>
+     </style>
+ 
+ </resources>
