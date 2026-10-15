@@ -13,8 +13,11 @@
 # time, otherwise "dark". Theme NAME is preserved; only "mode" is rewritten
 # (with a .bak-theme-sync backup on change). It ALSO flips the Termux
 # terminal background in ~/.termux/colors.properties to match (white by day,
-# black by night) and runs termux-reload-settings, so the resize gap behind
+# black by night) and night-mode in ~/.termux/termux.properties
+# (false by day, true by night, deprecated use-black-ui removed) and runs
+# termux-reload-settings, so the resize gap behind
 # the TUI is the same color as the theme — no black flash in light mode.
+# NOTE: night-mode needs a force-stop + reopen to take effect; colors apply live.
 # It does NOT try to read the
 # Android UiMode — Termux is denied without privileged permission:
 #   settings get secure ui_night_mode -> INTERACT_ACROSS_USERS denied
@@ -62,6 +65,7 @@ CFG="${THEME_SYNC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode/cli.json}"
 NOTIFY="${THEME_SYNC_NOTIFY:-0}"
 DO_TERMUX="${THEME_SYNC_TERMUX:-1}"
 TERMCOLORS="${THEME_SYNC_TERMUX_COLORS:-$HOME/.termux/colors.properties}"
+TERMPROPS="${THEME_SYNC_TERMUX_PROPS:-$HOME/.termux/termux.properties}"
 LIGHT_BG="${THEME_SYNC_LIGHT_BG:-#ffffff}"
 LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#1a1a1a}"
 DARK_BG="${THEME_SYNC_DARK_BG:-#000000}"
@@ -161,6 +165,16 @@ fi
 TERM_NEED=0
 if [ -n "$TERM_WANT_BG" ] && [ "$TERM_BG" != "$TERM_WANT_BG" ]; then TERM_NEED=1; fi
 
+# --- Termux night-mode (extra-keys bar + drawer follow this, needs restart) ---
+TERM_WANT_NIGHT=""
+PROP_NIGHT=""
+if [ "$DO_TERMUX" = "1" ] && [ "$FORCE" != "system" ] && [ -f "$TERMPROPS" ]; then
+  if [ "$WANT" = "light" ]; then TERM_WANT_NIGHT="false"; else TERM_WANT_NIGHT="true"; fi
+  PROP_NIGHT="$(sed -n 's/^[[:space:]]*night-mode[[:space:]]*=[[:space:]]*//p' "$TERMPROPS" | tail -1 | tr -d '[:space:]')"
+fi
+NIGHT_NEED=0
+if [ -n "$TERM_WANT_NIGHT" ] && [ "$PROP_NIGHT" != "$TERM_WANT_NIGHT" ]; then NIGHT_NEED=1; fi
+
 apply_termux() {
   # $1 = bg, $2 = fg
   [ -f "$TERMCOLORS" ] || return 0
@@ -176,9 +190,19 @@ apply_termux() {
     printf 'foreground=%s\n' "$2" >> "$TERMCOLORS"
   fi
   echo "theme-sync: termux background $TERM_BG -> $1 (backup: $TERMCOLORS.bak-theme-sync)"
-  if command -v termux-reload-settings >/dev/null 2>&1; then
-    termux-reload-settings 2>/dev/null || true
+}
+
+apply_nightmode() {
+  # $1 = true|false — also drops deprecated use-black-ui (forces dark, confuses).
+  [ -f "$TERMPROPS" ] || return 0
+  cp "$TERMPROPS" "$TERMPROPS.bak-theme-sync"
+  sed -i '/^[[:space:]]*use-black-ui[[:space:]]*=/d' "$TERMPROPS"
+  if grep -q '^[[:space:]]*night-mode[[:space:]]*=' "$TERMPROPS"; then
+    sed -i "s|^[[:space:]]*night-mode[[:space:]]*=.*|night-mode = $1|" "$TERMPROPS"
+  else
+    printf 'night-mode = %s\n' "$1" >> "$TERMPROPS"
   fi
+  echo "theme-sync: termux night-mode $PROP_NIGHT -> $1 (backup: $TERMPROPS.bak-theme-sync)"
 }
 
 if [ "$STATUS_ONLY" -eq 1 ]; then
@@ -190,6 +214,9 @@ if [ "$STATUS_ONLY" -eq 1 ]; then
     else
       echo "termux: skipped (missing file or --system)"
     fi
+    if [ -n "$TERM_WANT_NIGHT" ]; then
+      echo "termux: $TERMPROPS night-mode $PROP_NIGHT (want: $TERM_WANT_NIGHT)"
+    fi
   else
     echo "termux: disabled (--no-termux)"
   fi
@@ -199,7 +226,7 @@ fi
 NEED_OPENCODE=0
 [ "$CURRENT" != "$WANT" ] && NEED_OPENCODE=1
 
-if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ]; then
+if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ] && [ "$NIGHT_NEED" -eq 0 ]; then
   echo "theme-sync: already $WANT ($NAME)"
   [ "$DO_TERMUX" = "1" ] && [ -n "$TERM_WANT_BG" ] && echo "theme-sync: termux background already $TERM_BG — nothing to do."
   exit 0
@@ -209,6 +236,7 @@ if [ "$CHECK" -eq 1 ]; then
   [ "$NEED_OPENCODE" -eq 1 ] && echo "theme-sync: would set mode $CURRENT -> $WANT ($NAME, light window $LIGHT_START-$LIGHT_END)."
   # shellcheck disable=SC2034
   if [ "$TERM_NEED" -eq 1 ]; then echo "theme-sync: would set termux background $TERM_BG -> $TERM_WANT_BG."; fi
+  if [ "$NIGHT_NEED" -eq 1 ]; then echo "theme-sync: would set termux night-mode $PROP_NIGHT -> $TERM_WANT_NIGHT."; fi
   exit 2
 fi
 
@@ -236,6 +264,17 @@ fi
 
 if [ "$TERM_NEED" -eq 1 ]; then
   apply_termux "$TERM_WANT_BG" "$TERM_WANT_FG"
+fi
+
+if [ "$NIGHT_NEED" -eq 1 ]; then
+  apply_nightmode "$TERM_WANT_NIGHT"
+fi
+
+if [ "$TERM_NEED" -eq 1 ] || [ "$NIGHT_NEED" -eq 1 ]; then
+  if command -v termux-reload-settings >/dev/null 2>&1; then
+    termux-reload-settings 2>/dev/null || true
+  fi
+  echo "theme-sync: note: night-mode needs force-stop + reopen to take effect."
 fi
 
 if [ "$NOTIFY" = "1" ] && command -v termux-notification >/dev/null 2>&1; then

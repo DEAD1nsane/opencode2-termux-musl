@@ -27,20 +27,13 @@ uninstall, sideload, restore.
 
 ## Use with theme-sync
 
-`night-mode` needs an activity restart (force-stop + reopen), so
-`theme-sync.sh` can't flip the bar live. Pair manually:
+`scripts/theme-sync.sh` flips `night-mode` automatically (`false` by day,
+`true` by night, deprecated `use-black-ui` removed) alongside `cli.json`
+and the terminal background. `night-mode` needs a force-stop + reopen to
+take effect; colors apply live. Manual override if ever needed:
 
 ```sh
-# light hours (patched APK shows black-on-white bar)
-sed -i '/^night-mode/d; /^use-black-ui/d' ~/.termux/termux.properties
-printf 'night-mode = false\n' >> ~/.termux/termux.properties
-termux-reload-settings
-# then force-stop Termux and reopen
-
-# dark hours
-sed -i '/^night-mode/d' ~/.termux/termux.properties
-printf 'night-mode = true\n' >> ~/.termux/termux.properties
-termux-reload-settings
+sh scripts/theme-sync.sh --light   # or --dark
 # then force-stop Termux and reopen
 ```
 
