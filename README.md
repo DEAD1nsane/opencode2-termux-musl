@@ -117,6 +117,27 @@ Then pick one with `/themes` inside OpenCode. The seven accent themes are delibe
 | 7   | [`7-pbw-amoled`](themes/7-pbw-amoled.json)         | Pink `#FF60F8`    | <a href="docs/screenshots/themes/7-pbw-amoled.png"><img src="docs/screenshots/themes/7-pbw-amoled.png" width="300" alt="7-pbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/7-pbw-amoled-light.png"><img src="docs/screenshots/themes/7-pbw-amoled-light.png" width="300" alt="7-pbw-amoled light preview"></a>             |
 | 8   | [`8-rainbow-amoled`](themes/8-rainbow-amoled.json) | Full neon (multi) | <a href="docs/screenshots/themes/8-rainbow-amoled.png"><img src="docs/screenshots/themes/8-rainbow-amoled.png" width="300" alt="8-rainbow-amoled theme preview"></a> | <a href="docs/screenshots/themes/8-rainbow-amoled-light.png"><img src="docs/screenshots/themes/8-rainbow-amoled-light.png" width="300" alt="8-rainbow-amoled light preview"></a> |
 
+### Light/dark auto-switch (optional)
+
+`theme.mode: system` follows the terminal background (OSC 11), not Android day/night, so on Termux it never auto-switches. `scripts/theme-sync.sh` does time-based switching instead: light 07:00-19:00, dark otherwise. Theme name is preserved, only `mode` is rewritten.
+
+What it flips together at 07:00 / 19:00:
+
+- OpenCode `cli.json` `theme.mode` light/dark
+- Termux `~/.termux/colors.properties` background white `#ffffff` by day / black `#000000` by night (plus matching foreground), so no black flash behind the TUI
+- Termux `~/.termux/termux.properties` `night-mode` false by day / true by night (extra-keys bar + drawer follow this)
+
+```sh
+sh scripts/theme-sync.sh --status       # show current vs computed mode
+sh scripts/theme-sync.sh                # apply now
+sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30  # custom window
+sh scripts/theme-sync.sh --no-termux    # opencode mode only
+sh scripts/theme-sync.sh --light        # force light
+sh scripts/theme-sync.sh --dark         # force dark
+```
+
+Unattended (both optional, pick either): job 7803 every 15min, and/or a `precmd` hook in `~/.zshrc` for flips within seconds while the shell is active (see `docs/INSTALL.md` Theme day/night section). Takes effect on next TUI launch; Termux colors apply immediately but `night-mode` needs force-stop + reopen. Requires only `python3`.
+
 ## Formatter on Termux
 
 The built-in prettier formatter cannot spawn on Termux: its `.bin/prettier` uses a `#!/usr/bin/env node` shebang, `/usr/bin/env` does not exist on Android, and the musl wrapper's `LD_PRELOAD` swap prevents `termux-exec` from rewriting it. Format attempts fail with `NotFound: ChildProcess.spawn` and are silently skipped.
@@ -175,7 +196,7 @@ sh scripts/remove-v1.sh       # deletes v1 binary + opencode2 leftovers (~350 MB
 ## Known limitations
 
 - **Formatter**: needs `enable-formatter.sh` once (shebang issue above). Without it, formatting silently no-ops.
-- **Theme `system` mode**: follows the _terminal_ background (OSC 11), not the Android day/night mode — Termux's background is fixed, so `system` never auto-switches. Use `scripts/theme-sync.sh` for time-based light/dark (see below).
+- **Theme `system` mode**: follows the _terminal_ background (OSC 11), not the Android day/night mode — Termux's background is fixed, so `system` never auto-switches. Use `scripts/theme-sync.sh` for time-based light/dark (see Light/dark auto-switch above).
 - **PTY support**: depends on `librust_pty_arm64.so`; not shipped yet. PRs welcome.
 - **Proxy latency**: ~100–200 ms per outbound request (see Network above).
 
