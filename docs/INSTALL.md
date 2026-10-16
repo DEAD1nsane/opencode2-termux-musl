@@ -97,6 +97,10 @@ termux-job-scheduler --job-id 7803 --period-ms 900000 \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
 ```
 
+For flips within seconds while the shell is active (the job window is
+inexact), `~/.zshrc` also runs the script backgrounded on every prompt,
+guarded to once per 5min — a notification fires only when a flip happens.
+
 ## Updating
 
 Unattended auto-update (Termux:API — enable once, applies updates on its own roughly every 6h; exact timing is up to Android, not a fixed hour):
