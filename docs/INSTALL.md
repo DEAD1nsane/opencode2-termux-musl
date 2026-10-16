@@ -88,11 +88,11 @@ The Termux terminal background in `~/.termux/colors.properties` is flipped to
 match (white `#ffffff` by day, black `#000000` by night, `termux-reload-settings`
 run automatically) so the resize gap behind the TUI is the same color — no
 black flash in light mode. Opt out with `--no-termux` (`THEME_SYNC_TERMUX=0`).
-Takes effect on next TUI launch (Termux colors apply immediately). Hourly unattended sync (job id 7803, clear of
-the auto-update job 7802):
+Takes effect on next TUI launch (Termux colors apply immediately). Unattended sync every 15min (job id 7803, clear of
+the auto-update job 7802 — 15min is Android's minimum job period, so the flip lands within ~15min after 07:00/19:00, never exactly on it):
 
 ```sh
-termux-job-scheduler --job-id 7803 --period-ms 3600000 \
+termux-job-scheduler --job-id 7803 --period-ms 900000 \
   --persisted true \
   -s "$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
 ```

@@ -80,7 +80,7 @@ cp themes/*.json ~/.config/opencode/themes/
 curl -sL https://gist.githubusercontent.com/DEAD1nsane/54621517a114c8e2a71d61ced990ca22/raw/theme-daynight.sh | sh
 ```
 
-Skip it and nothing changes. `system` follows terminal bg, never Android. Opt-in sets `light` 07:00-19:00, `dark` otherwise, hourly job 7803, revert with `--system`.
+Skip it and nothing changes. `system` follows terminal bg, never Android. Opt-in sets `light` 07:00-19:00, `dark` otherwise, 15-min job 7803, revert with `--system`.
 
 ---
 

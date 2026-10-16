@@ -46,11 +46,14 @@
 #
 # Unattended (Termux:API — schedule once; uses job id 7803 to avoid the
 # auto-update job 7802):
-#   termux-job-scheduler --job-id 7803 --period-ms 3600000 \
+#   termux-job-scheduler --job-id 7803 --period-ms 900000 \
 #     --persisted true \
 #     -s "$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
+# 900000ms (15min) is Android's minimum job period — the flip lands within
+# ~15min after the boundary (Doze can delay further), never exactly on it.
+# A notification fires on every flip: restart the TUI + force-stop Termux.
 # Takes effect on next TUI launch (cli.json is read at startup; a running
-# TUI keeps its current mode). Hourly is plenty — mode only flips twice daily.
+# TUI keeps its current mode).
 #
 # Requires: python3 (JSON edit). No network, no Termux:API (except notify/job).
 #
@@ -62,7 +65,7 @@ set -e
 LIGHT_START="${THEME_SYNC_LIGHT_START:-07:00}"
 LIGHT_END="${THEME_SYNC_LIGHT_END:-19:00}"
 CFG="${THEME_SYNC_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/opencode/cli.json}"
-NOTIFY="${THEME_SYNC_NOTIFY:-0}"
+NOTIFY="${THEME_SYNC_NOTIFY:-1}"
 DO_TERMUX="${THEME_SYNC_TERMUX:-1}"
 TERMCOLORS="${THEME_SYNC_TERMUX_COLORS:-$HOME/.termux/colors.properties}"
 TERMPROPS="${THEME_SYNC_TERMUX_PROPS:-$HOME/.termux/termux.properties}"
@@ -278,7 +281,7 @@ if [ "$TERM_NEED" -eq 1 ] || [ "$NIGHT_NEED" -eq 1 ]; then
 fi
 
 if [ "$NOTIFY" = "1" ] && command -v termux-notification >/dev/null 2>&1; then
-  termux-notification --title "opencode theme" --content "Switched to $WANT mode ($NAME)." 2>/dev/null || true
+  termux-notification --title "opencode theme" --content "Switched to $WANT ($NAME). Restart TUI + reopen Termux." 2>/dev/null || true
 fi
 
 echo "Restart the TUI to pick it up (cli.json is read at startup)."
