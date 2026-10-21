@@ -48,6 +48,8 @@
 #   sh scripts/theme-sync.sh --system        # restore mode "system" (termux left alone)
 #   sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30
 #   sh scripts/theme-sync.sh --no-termux     # opencode mode only, leave Termux colors alone
+#   sh scripts/theme-sync.sh --no-opencode   # Termux colors only, leave cli.json alone
+#   sh scripts/theme-sync.sh --no-palette    # background/foreground only, keep the ANSI colors
 #
 # Env knobs:
 #   THEME_SYNC_LIGHT_START=07:00  THEME_SYNC_LIGHT_END=19:00
@@ -61,6 +63,7 @@
 #   THEME_SYNC_PALETTE_LIGHT=$HOME/.termux/colors-light.properties
 #   THEME_SYNC_PALETTE_DARK=$HOME/.termux/colors-dark.properties
 #   THEME_SYNC_PALETTE=0   (disable the palette swap; bg/fg only, as before)
+#   THEME_SYNC_OPENCODE=0  (leave cli.json alone; Termux colors only)
 #
 # Unattended (Termux:API — schedule once; uses job id 7803 to avoid the
 # auto-update job 7802):
@@ -94,6 +97,7 @@ DARK_FG="${THEME_SYNC_DARK_FG:-#ffffff}"
 PAL_LIGHT="${THEME_SYNC_PALETTE_LIGHT:-$HOME/.termux/colors-light.properties}"
 PAL_DARK="${THEME_SYNC_PALETTE_DARK:-$HOME/.termux/colors-dark.properties}"
 DO_PALETTE="${THEME_SYNC_PALETTE:-1}"
+DO_OPENCODE="${THEME_SYNC_OPENCODE:-1}"
 
 FORCE=""
 CHECK=0
@@ -109,6 +113,8 @@ for arg in "$@"; do
     --termux) DO_TERMUX=1 ;;
     --no-termux) DO_TERMUX=0 ;;
     --no-palette) DO_PALETTE=0 ;;
+    --opencode) DO_OPENCODE=1 ;;
+    --no-opencode) DO_OPENCODE=0 ;;
     --light-start=*) LIGHT_START="${arg#--light-start=}" ;;
     --light-end=*) LIGHT_END="${arg#--light-end=}" ;;
     --config=*) CFG="${arg#--config=}" ;;
@@ -120,7 +126,7 @@ for arg in "$@"; do
       ;;
     --light-start|--light-end|--config|--termux-colors)
       echo "error: $arg needs a value — use $arg=VALUE" >&2; exit 1 ;;
-    --light|--dark|--system|--check|--status|--notify|--termux|--no-termux|--no-palette)
+    --light|--dark|--system|--check|--status|--notify|--termux|--no-termux|--no-palette|--opencode|--no-opencode)
       ;; # handled above (unreachable, kept for clarity)
     *)
       # positional HH:MM pair: theme-sync.sh [LIGHT_START] [LIGHT_END]
@@ -288,6 +294,9 @@ apply_nightmode() {
 if [ "$STATUS_ONLY" -eq 1 ]; then
   echo "config: $CFG"
   echo "theme: $NAME / mode: $CURRENT (want: $WANT, light window $LIGHT_START-$LIGHT_END)"
+  if [ "$DO_OPENCODE" = "0" ]; then
+    echo "opencode: disabled (--no-opencode) - cli.json will not be touched"
+  fi
   if [ "$DO_TERMUX" = "1" ]; then
     if [ -n "$TERM_WANT_BG" ]; then
       echo "termux: $TERMCOLORS background $TERM_BG (want: $TERM_WANT_BG)"
@@ -314,7 +323,7 @@ if [ "$STATUS_ONLY" -eq 1 ]; then
 fi
 
 NEED_OPENCODE=0
-[ "$CURRENT" != "$WANT" ] && NEED_OPENCODE=1
+if [ "$DO_OPENCODE" = "1" ] && [ "$CURRENT" != "$WANT" ]; then NEED_OPENCODE=1; fi
 
 if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ] && [ "$NIGHT_NEED" -eq 0 ] && [ "$PAL_NEED" -eq 0 ]; then
   echo "theme-sync: already $WANT ($NAME)"

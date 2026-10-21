@@ -1,14 +1,18 @@
 #!/data/data/com.termux/files/usr/bin/sh
 # theme — manual light/dark control for OpenCode + Termux on Termux.
 #
-# Why this exists: scripts/theme-sync.sh registers an Android job
-# (id 7803, every 15 min) that rewrites cli.json theme.mode on a 07:00-19:00
-# clock. That job wins over anything set by hand in the TUI: switch to light,
-# wait 15 minutes, the scheduler puts you back in dark. "theme light|dark"
-# cancels the job first, so a manual choice sticks. "theme auto" puts it back.
+# This is a THIN WRAPPER around scripts/theme-sync.sh: all the applying logic
+# (cli.json mode, Termux palette, background/foreground, night-mode) lives in
+# theme-sync.sh and is not duplicated here. This script only adds:
+#   1. control of the 15-minute scheduler job (the thing that keeps undoing
+#      a manual choice), and
+#   2. a quiet one-line summary instead of theme-sync.sh's verbose report.
 #
-# This script is deliberately QUIET - one line of output per action. The
-# scheduler itself (theme-sync.sh) stays verbose; it notifies instead.
+# Why the scheduler has to be cancelled: theme-sync.sh registers an Android job
+# (id 7803, every 15 min) that rewrites cli.json theme.mode on a 07:00-19:00
+# clock. That job wins over anything set by hand in the TUI - switch to light,
+# wait 15 minutes, and the scheduler puts you back in dark. "theme light|dark"
+# cancels the job first, so a manual choice sticks. "theme auto" puts it back.
 #
 # Usage:
 #   theme              show this help
@@ -18,13 +22,13 @@
 #   theme termux dark  only the Termux terminal palette (opencode theme untouched)
 #   theme auto         restore the time-based auto scheduler (light 07:00-19:00)
 #   theme status       one-glance summary
-#   theme status -v    verbose (full palette diff)
+#   theme status -v    verbose (theme-sync.sh's own report)
 #
 # After a light/dark switch: restart the TUI (cli.json is read at startup, or
 # use /themes inside it for an instant flip) AND force-stop + reopen the
 # Termux app (night-mode is only read at app start).
 #
-# Symlinked to ~/bin/theme.
+# Symlinked to ~/bin/theme; install.sh puts it in $PREFIX/bin/theme.
 
 set -e
 
@@ -45,110 +49,47 @@ SELF_DIR="$(cd "$(dirname "$SELF")" && pwd)"
 SYNC="$SELF_DIR/theme-sync.sh"
 [ -f "$SYNC" ] || SYNC="/data/data/com.termux/files/usr/libexec/opencode/theme-sync.sh"
 [ -f "$SYNC" ] || SYNC="$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
+[ -f "$SYNC" ] || { echo "theme: theme-sync.sh not found" >&2; exit 1; }
 
 TERMCOLORS="$HOME/.termux/colors.properties"
 TERMPROPS="$HOME/.termux/termux.properties"
-PAL_LIGHT="$HOME/.termux/colors-light.properties"
-PAL_DARK="$HOME/.termux/colors-dark.properties"
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/cli.json"
 
 JOB_ID=7803
 JOB_PERIOD=900000
 LIGHT_START="${THEME_SYNC_LIGHT_START:-07:00}"
 LIGHT_END="${THEME_SYNC_LIGHT_END:-19:00}"
-LIGHT_BG="${THEME_SYNC_LIGHT_BG:-#ffffff}"
-LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#000000}"
-DARK_BG="${THEME_SYNC_DARK_BG:-#000000}"
-DARK_FG="${THEME_SYNC_DARK_FG:-#ffffff}"
 
 job_active() {
   termux-job-scheduler --pending 2>/dev/null | grep -q "Pending Job $JOB_ID:"
 }
 
-to_min() { # HH:MM -> minutes since midnight
-  h="${1%%:*}"; m="${1##*:}"
-  h="${h#0}"; m="${m#0}"
-  [ -z "$h" ] && h=0; [ -z "$m" ] && m=0
-  echo $(($h * 60 + $m))
-}
-
-clock_mode() { # light|dark for the current time
-  now="$(to_min "$(date '+%H:%M')")"
-  start="$(to_min "$LIGHT_START")"
-  end="$(to_min "$LIGHT_END")"
-  if [ "$start" -le "$end" ]; then
-    if [ "$now" -ge "$start" ] && [ "$now" -lt "$end" ]; then echo light; else echo dark; fi
-  else
-    if [ "$now" -ge "$start" ] || [ "$now" -lt "$end" ]; then echo light; else echo dark; fi
+# Run theme-sync.sh quietly: its output goes to a temp file, and only surfaces
+# if the script fails. THEME_SYNC_NOTIFY=0 because a manual switch does not
+# need an Android notification (the scheduler still notifies on its own flips).
+run_sync() {
+  out="$(mktemp 2>/dev/null || echo "/data/data/com.termux/files/usr/tmp/opencode/theme-sync.out")"
+  if ! THEME_SYNC_NOTIFY=0 sh "$SYNC" "$@" >"$out" 2>&1; then
+    echo "theme: theme-sync.sh failed:" >&2
+    cat "$out" >&2
+    rm -f "$out"
+    return 1
   fi
+  rm -f "$out"
 }
 
-set_cfg_mode() { # $1 = light|dark|system
-  python3 - "$CFG" "$1" <<'PY'
-import json, sys
-path, mode = sys.argv[1], sys.argv[2]
-cfg = json.load(open(path))
-theme = cfg.get("theme")
-if not isinstance(theme, dict):
-    theme = {}
-    cfg["theme"] = theme
-theme["mode"] = mode
-theme.setdefault("name", "opencode")
-with open(path, "w") as f:
-    json.dump(cfg, f, indent=2)
-    f.write("\n")
-PY
+read_cfg_mode() {
+  python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("theme",{}).get("mode","?"))' "$CFG" 2>/dev/null || echo "?"
 }
 
-apply_palette() { # $1 = light|dark ; quiet, no output
-  mode="$1"
-  if [ "$mode" = "light" ]; then src="$PAL_LIGHT"; night="false"; bg="$LIGHT_BG"; fg="$LIGHT_FG"
-  else src="$PAL_DARK"; night="true"; bg="$DARK_BG"; fg="$DARK_FG"; fi
-  [ -f "$TERMCOLORS" ] || { echo "theme: missing $TERMCOLORS" >&2; return 1; }
-  cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
-  keys="background foreground cursor color0 color1 color2 color3 color4 color5 color6 color7 color8 color9 color10 color11 color12 color13 color14 color15"
-  if [ ! -f "$src" ]; then
-    # No palette file (fresh install): background/foreground only, like
-    # theme-sync.sh's documented fallback. The ANSI colours stay as they are.
-    keys="background foreground"
-    echo "theme: no palette file $src - background/foreground only" >&2
-  fi
-  for key in $keys; do
-    if [ -f "$src" ]; then
-      want="$(sed -n "s/^${key}=//p" "$src" | head -1 | tr -d '[:space:]')"
-    else
-      case "$key" in
-        background) want="$bg" ;;
-        foreground) want="$fg" ;;
-      esac
-    fi
-    [ -n "$want" ] || continue
-    if grep -q "^${key}=" "$TERMCOLORS"; then
-      sed -i "s|^${key}=.*|${key}=${want}|" "$TERMCOLORS"
-    else
-      printf '%s=%s\n' "$key" "$want" >> "$TERMCOLORS"
-    fi
-  done
-  if [ -f "$TERMPROPS" ]; then
-    cp "$TERMPROPS" "$TERMPROPS.bak-theme-sync"
-    if grep -q '^[[:space:]]*night-mode[[:space:]]*=' "$TERMPROPS"; then
-      sed -i "s|^[[:space:]]*night-mode[[:space:]]*=.*|night-mode = $night|" "$TERMPROPS"
-    else
-      printf 'night-mode = %s\n' "$night" >> "$TERMPROPS"
-    fi
-  fi
-  command -v termux-reload-settings >/dev/null 2>&1 && termux-reload-settings 2>/dev/null
-  return 0
+read_prop() { # $1 = file, $2 = key
+  sed -n "s/^$2=//p" "$1" 2>/dev/null | head -1
 }
 
-apply_mode() { # $1 = light|dark ; quiet, prints one summary line
-  mode="$1"
-  set_cfg_mode "$mode"
-  apply_palette "$mode"
-  bg="$(sed -n 's/^background=//p' "$TERMCOLORS" | head -1)"
+summary() { # one line describing the result
+  bg="$(read_prop "$TERMCOLORS" background)"
   night="$(sed -n 's/^[[:space:]]*night-mode[[:space:]]*=[[:space:]]*//p' "$TERMPROPS" 2>/dev/null | tail -1 | tr -d '[:space:]')"
-  printf 'theme: %s - opencode mode %s, termux bg %s, night-mode %s (restart TUI + reopen Termux)\n' \
-    "$mode" "$mode" "$bg" "${night:-unset}"
+  printf 'theme: opencode %s, termux bg %s, night-mode %s\n' "$(read_cfg_mode)" "$bg" "${night:-unset}"
 }
 
 cancel_job() {
@@ -183,14 +124,12 @@ status() {
     -v|--verbose) sh "$SYNC" --status ;;
   esac
   cfg_theme="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("theme",{}).get("name","?"))' "$CFG" 2>/dev/null || echo "?")"
-  cfg_mode="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("theme",{}).get("mode","?"))' "$CFG" 2>/dev/null || echo "?")"
-  t_bg="$(sed -n 's/^background=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
-  t_fg="$(sed -n 's/^foreground=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
-  t_cur="$(sed -n 's/^cursor=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
-  t_night="$(sed -n 's/^[[:space:]]*night-mode[[:space:]]*=[[:space:]]*//p' "$TERMPROPS" 2>/dev/null | tail -1 | tr -d '[:space:]')"
-  printf 'opencode  : %s (%s)\n' "$cfg_theme" "$cfg_mode"
-  printf 'termux    : bg %s  fg %s  cursor %s\n' "$t_bg" "$t_fg" "$t_cur"
-  printf 'night-mode: %s\n' "${t_night:-unset}"
+  printf 'opencode  : %s (%s)\n' "$cfg_theme" "$(read_cfg_mode)"
+  printf 'termux    : bg %s  fg %s  cursor %s\n' \
+    "$(read_prop "$TERMCOLORS" background)" "$(read_prop "$TERMCOLORS" foreground)" \
+    "$(read_prop "$TERMCOLORS" cursor)"
+  printf 'night-mode: %s\n' \
+    "$(sed -n 's/^[[:space:]]*night-mode[[:space:]]*=[[:space:]]*//p' "$TERMPROPS" 2>/dev/null | tail -1 | tr -d '[:space:]')"
   if job_active; then
     printf 'scheduler : ON  (auto %s-%s, overrides manual mode)\n' "$LIGHT_START" "$LIGHT_END"
   else
@@ -201,21 +140,22 @@ status() {
 case "${1:-help}" in
   light|dark)
     cancel_job
-    apply_mode "$1"
+    run_sync "--$1"
+    summary
     ;;
   termux)
     case "${2:-}" in
       light|dark)
-        apply_palette "$2"
-        bg="$(sed -n 's/^background=//p' "$TERMCOLORS" | head -1)"
-        printf 'theme: termux %s - bg %s (opencode theme untouched)\n' "$2" "$bg"
+        run_sync "--$2" --no-opencode
+        summary
         ;;
       *) echo "usage: theme termux light|dark" >&2; exit 1 ;;
     esac
     ;;
   auto)
     register_job
-    apply_mode "$(clock_mode)"
+    run_sync
+    summary
     ;;
   status)
     status "${2:-}"

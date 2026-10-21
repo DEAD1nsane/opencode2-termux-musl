@@ -133,6 +133,7 @@ sh scripts/theme-sync.sh --status       # show current vs computed mode
 sh scripts/theme-sync.sh                # apply now
 sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30  # custom window
 sh scripts/theme-sync.sh --no-termux    # opencode mode only
+sh scripts/theme-sync.sh --no-opencode  # Termux colors only, leave cli.json alone
 sh scripts/theme-sync.sh --no-palette   # background/foreground only, keep the ANSI colours
 sh scripts/theme-sync.sh --light        # force light
 sh scripts/theme-sync.sh --dark         # force dark
@@ -144,7 +145,7 @@ Unattended (both optional, pick either): job 7803 every 15min, and/or a `precmd`
 
 ### Manual light/dark (`theme`)
 
-`scripts/theme` is the manual counterpart to the scheduler. `install.sh` puts it at `$PREFIX/bin/theme`; from a clone, symlink it instead so edits take effect immediately:
+`scripts/theme` is the manual counterpart to the scheduler — a thin wrapper that adds scheduler control and a quiet one-line summary, while all the applying logic stays in `theme-sync.sh`. `install.sh` puts it at `$PREFIX/bin/theme`; from a clone, symlink it instead so edits take effect immediately:
 
 ```sh
 ln -s "$PWD/scripts/theme" ~/bin/theme
