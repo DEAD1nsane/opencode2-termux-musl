@@ -10,6 +10,8 @@
 # Usage:
 #   theme light   force light (opencode light theme + white Termux background)
 #   theme dark    force dark
+#   theme termux light   only the Termux terminal palette (opencode theme untouched)
+#   theme termux dark    only the Termux terminal palette (opencode theme untouched)
 #   theme auto    restore the time-based auto scheduler (light 07:00-19:00)
 #   theme status  what is set right now
 #
@@ -62,10 +64,52 @@ register_job() {
   echo "theme: auto-scheduler job $JOB_ID registered (every 15 min)"
 }
 
+TERMCOLORS="$HOME/.termux/colors.properties"
+TERMPROPS="$HOME/.termux/termux.properties"
+PAL_LIGHT="$HOME/.termux/colors-light.properties"
+PAL_DARK="$HOME/.termux/colors-dark.properties"
+
+# termux_palette <light|dark> — flip ONLY the terminal palette + night-mode.
+# Leaves cli.json (the opencode theme) completely alone.
+termux_palette() {
+  mode="$1"
+  if [ "$mode" = "light" ]; then src="$PAL_LIGHT"; night="false"; else src="$PAL_DARK"; night="true"; fi
+  [ -f "$src" ] || { echo "theme: palette file missing: $src" >&2; return 1; }
+  [ -f "$TERMCOLORS" ] || { echo "theme: $TERMCOLORS missing" >&2; return 1; }
+  cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
+  for key in background foreground cursor color0 color1 color2 color3 color4 color5 \
+             color6 color7 color8 color9 color10 color11 color12 color13 color14 color15; do
+    want="$(sed -n "s/^${key}=//p" "$src" | head -1 | tr -d '[:space:]')"
+    [ -n "$want" ] || continue
+    if grep -q "^${key}=" "$TERMCOLORS"; then
+      sed -i "s|^${key}=.*|${key}=${want}|" "$TERMCOLORS"
+    else
+      printf '%s=%s\n' "$key" "$want" >> "$TERMCOLORS"
+    fi
+  done
+  if [ -f "$TERMPROPS" ]; then
+    cp "$TERMPROPS" "$TERMPROPS.bak-theme-sync"
+    if grep -q '^[[:space:]]*night-mode[[:space:]]*=' "$TERMPROPS"; then
+      sed -i "s|^[[:space:]]*night-mode[[:space:]]*=.*|night-mode = $night|" "$TERMPROPS"
+    else
+      printf 'night-mode = %s\n' "$night" >> "$TERMPROPS"
+    fi
+  fi
+  echo "theme: termux palette <- $src (background now $(sed -n 's/^background=//p' "$TERMCOLORS" | head -1))"
+  command -v termux-reload-settings >/dev/null 2>&1 && termux-reload-settings 2>/dev/null
+  echo "theme: opencode theme NOT touched. night-mode needs a Termux restart to show in the app chrome."
+}
+
 case "${1:-status}" in
   light|dark)
     cancel_job
     sh "$SYNC" "--$1"
+    ;;
+  termux)
+    case "${2:-}" in
+      light|dark) termux_palette "$2" ;;
+      *) echo "usage: theme termux light|dark" >&2; exit 1 ;;
+    esac
     ;;
   auto)
     register_job
