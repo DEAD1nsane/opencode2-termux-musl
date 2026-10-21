@@ -126,15 +126,19 @@ What it flips together at 07:00 / 19:00:
 - OpenCode `cli.json` `theme.mode` light/dark
 - Termux `~/.termux/colors.properties` background white `#ffffff` by day / black `#000000` by night (plus matching foreground), so no black flash behind the TUI
 - Termux `~/.termux/termux.properties` `night-mode` false by day / true by night (extra-keys bar + drawer follow this)
+- the full 16-colour ANSI palette, copied from `~/.termux/colors-light.properties` (day) and `~/.termux/colors-dark.properties` (night) — the dark palette's yellow is 1.07:1 and its white slots 1.00:1 on a white background, i.e. invisible
 
 ```sh
 sh scripts/theme-sync.sh --status       # show current vs computed mode
 sh scripts/theme-sync.sh                # apply now
 sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30  # custom window
 sh scripts/theme-sync.sh --no-termux    # opencode mode only
+sh scripts/theme-sync.sh --no-palette   # background/foreground only, keep the ANSI colours
 sh scripts/theme-sync.sh --light        # force light
 sh scripts/theme-sync.sh --dark         # force dark
 ```
+
+`colors-light.properties` and `colors-dark.properties` are the source of truth — edit those, not `colors.properties`, which the next run overwrites. Override the palette paths with `THEME_SYNC_PALETTE_LIGHT` / `THEME_SYNC_PALETTE_DARK`, or set `THEME_SYNC_PALETTE=0` to skip the swap entirely.
 
 Unattended (both optional, pick either): job 7803 every 15min, and/or a `precmd` hook in `~/.zshrc` for flips within seconds while the shell is active (see `docs/INSTALL.md` Theme day/night section). Takes effect on next TUI launch; Termux colors apply immediately but `night-mode` needs force-stop + reopen. Requires only `python3`.
 

@@ -18,6 +18,21 @@
 # termux-reload-settings, so the resize gap behind
 # the TUI is the same color as the theme — no black flash in light mode.
 # NOTE: night-mode needs a force-stop + reopen to take effect; colors apply live.
+#
+# PALETTE SWAP: background/foreground alone is not enough for day mode — the
+# 16 ANSI colors are tuned for a black background, so on white the dark
+# palette's yellow is 1.07:1 and its white slots (color6/7/14/15) are 1.00:1,
+# i.e. invisible. So this script also swaps the whole palette: it copies the
+# cursor + color0..color15 values from
+#   ~/.termux/colors-light.properties  (day)
+#   ~/.termux/colors-dark.properties   (night)
+# into ~/.termux/colors.properties, key by key, leaving comments intact.
+# Both palette files are the source of truth — edit those, not the live file,
+# or the next scheduled run will revert you. background/foreground still come
+# from THEME_SYNC_LIGHT_BG/FG and THEME_SYNC_DARK_BG/FG, so those env knobs
+# keep working and override whatever the palette file says.
+# If a palette file is missing, only background/foreground are touched
+# (previous behaviour).
 # It does NOT try to read the
 # Android UiMode — Termux is denied without privileged permission:
 #   settings get secure ui_night_mode -> INTERACT_ACROSS_USERS denied
@@ -43,6 +58,9 @@
 #     (default ~/.termux/colors.properties)
 #   THEME_SYNC_LIGHT_BG=#ffffff  THEME_SYNC_LIGHT_FG=#1a1a1a
 #   THEME_SYNC_DARK_BG=#000000  THEME_SYNC_DARK_FG=#ffffff
+#   THEME_SYNC_PALETTE_LIGHT=$HOME/.termux/colors-light.properties
+#   THEME_SYNC_PALETTE_DARK=$HOME/.termux/colors-dark.properties
+#   THEME_SYNC_PALETTE=0   (disable the palette swap; bg/fg only, as before)
 #
 # Unattended (Termux:API — schedule once; uses job id 7803 to avoid the
 # auto-update job 7802):
@@ -70,9 +88,12 @@ DO_TERMUX="${THEME_SYNC_TERMUX:-1}"
 TERMCOLORS="${THEME_SYNC_TERMUX_COLORS:-$HOME/.termux/colors.properties}"
 TERMPROPS="${THEME_SYNC_TERMUX_PROPS:-$HOME/.termux/termux.properties}"
 LIGHT_BG="${THEME_SYNC_LIGHT_BG:-#ffffff}"
-LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#1a1a1a}"
+LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#000000}"
 DARK_BG="${THEME_SYNC_DARK_BG:-#000000}"
 DARK_FG="${THEME_SYNC_DARK_FG:-#ffffff}"
+PAL_LIGHT="${THEME_SYNC_PALETTE_LIGHT:-$HOME/.termux/colors-light.properties}"
+PAL_DARK="${THEME_SYNC_PALETTE_DARK:-$HOME/.termux/colors-dark.properties}"
+DO_PALETTE="${THEME_SYNC_PALETTE:-1}"
 
 FORCE=""
 CHECK=0
@@ -87,6 +108,7 @@ for arg in "$@"; do
     --status) STATUS_ONLY=1 ;;
     --termux) DO_TERMUX=1 ;;
     --no-termux) DO_TERMUX=0 ;;
+    --no-palette) DO_PALETTE=0 ;;
     --light-start=*) LIGHT_START="${arg#--light-start=}" ;;
     --light-end=*) LIGHT_END="${arg#--light-end=}" ;;
     --config=*) CFG="${arg#--config=}" ;;
@@ -98,7 +120,7 @@ for arg in "$@"; do
       ;;
     --light-start|--light-end|--config|--termux-colors)
       echo "error: $arg needs a value — use $arg=VALUE" >&2; exit 1 ;;
-    --light|--dark|--system|--check|--status|--notify|--termux|--no-termux)
+    --light|--dark|--system|--check|--status|--notify|--termux|--no-termux|--no-palette)
       ;; # handled above (unreachable, kept for clarity)
     *)
       # positional HH:MM pair: theme-sync.sh [LIGHT_START] [LIGHT_END]
@@ -152,21 +174,52 @@ CURRENT="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("
 NAME="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("theme",{}).get("name","?"))' "$CFG" 2>/dev/null || echo "?")"
 
 # --- Termux terminal background (kills the resize flash) ---
-# Only background/foreground are flipped; the palette is left alone.
+# background/foreground are flipped, and the whole ANSI palette is copied from
+# colors-light.properties / colors-dark.properties for the target mode.
 # --system leaves Termux alone (mode "system" follows whatever is set).
 TERM_BG=""
+TERM_FG=""
 TERM_WANT_BG=""
 TERM_WANT_FG=""
 if [ "$DO_TERMUX" = "1" ] && [ "$FORCE" != "system" ] && [ -f "$TERMCOLORS" ]; then
   TERM_BG="$(sed -n 's/^background=//p' "$TERMCOLORS" | head -1)"
+  TERM_FG="$(sed -n 's/^foreground=//p' "$TERMCOLORS" | head -1)"
   if [ "$WANT" = "light" ]; then
     TERM_WANT_BG="$LIGHT_BG"; TERM_WANT_FG="$LIGHT_FG"
   else
     TERM_WANT_BG="$DARK_BG"; TERM_WANT_FG="$DARK_FG"
   fi
 fi
+# Both keys are checked — foreground-only drift used to go unrepaired.
 TERM_NEED=0
-if [ -n "$TERM_WANT_BG" ] && [ "$TERM_BG" != "$TERM_WANT_BG" ]; then TERM_NEED=1; fi
+if [ -n "$TERM_WANT_BG" ]; then
+  [ "$TERM_BG" != "$TERM_WANT_BG" ] && TERM_NEED=1
+  [ "$TERM_FG" != "$TERM_WANT_FG" ] && TERM_NEED=1
+fi
+
+# --- Termux ANSI palette (cursor + color0..15) ---
+# Without this, day mode keeps the black-background palette: yellow lands at
+# 1.07:1 and the white slots at 1.00:1 on white. Missing palette file or
+# THEME_SYNC_PALETTE=0 degrades to the old background/foreground-only behaviour.
+PAL_KEYS="cursor color0 color1 color2 color3 color4 color5 color6 color7 \
+color8 color9 color10 color11 color12 color13 color14 color15"
+PAL_SRC=""
+PAL_DRIFT=""
+PAL_NEED=0
+if [ "$DO_TERMUX" = "1" ] && [ "$DO_PALETTE" = "1" ] && [ "$FORCE" != "system" ] && [ -f "$TERMCOLORS" ]; then
+  if [ "$WANT" = "light" ]; then PAL_SRC="$PAL_LIGHT"; else PAL_SRC="$PAL_DARK"; fi
+  if [ -f "$PAL_SRC" ]; then
+    for key in $PAL_KEYS; do
+      want="$(sed -n "s/^${key}=//p" "$PAL_SRC" | head -1 | tr -d '[:space:]')"
+      [ -n "$want" ] || continue
+      have="$(sed -n "s/^${key}=//p" "$TERMCOLORS" | head -1 | tr -d '[:space:]')"
+      if [ "$have" != "$want" ]; then
+        PAL_NEED=1
+        PAL_DRIFT="$PAL_DRIFT ${key}:${have:-unset}->${want}"
+      fi
+    done
+  fi
+fi
 
 # --- Termux night-mode (extra-keys bar + drawer follow this, needs restart) ---
 TERM_WANT_NIGHT=""
@@ -178,10 +231,34 @@ fi
 NIGHT_NEED=0
 if [ -n "$TERM_WANT_NIGHT" ] && [ "$PROP_NIGHT" != "$TERM_WANT_NIGHT" ]; then NIGHT_NEED=1; fi
 
+COLORS_BACKED_UP=0
+backup_colors() { # one .bak-theme-sync per run, taken before the first edit
+  [ "$COLORS_BACKED_UP" = "1" ] && return 0
+  [ -f "$TERMCOLORS" ] || return 0
+  cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
+  COLORS_BACKED_UP=1
+}
+
+apply_palette() { # copy cursor + color0..15 from $PAL_SRC into $TERMCOLORS
+  [ -f "$PAL_SRC" ] || return 0
+  backup_colors
+  for key in $PAL_KEYS; do
+    want="$(sed -n "s/^${key}=//p" "$PAL_SRC" | head -1 | tr -d '[:space:]')"
+    [ -n "$want" ] || continue
+    if grep -q "^${key}=" "$TERMCOLORS"; then
+      sed -i "s|^${key}=.*|${key}=${want}|" "$TERMCOLORS"
+    else
+      printf '%s=%s\n' "$key" "$want" >> "$TERMCOLORS"
+    fi
+  done
+  echo "theme-sync: palette <- $PAL_SRC"
+  echo "theme-sync: palette changed:$PAL_DRIFT"
+}
+
 apply_termux() {
   # $1 = bg, $2 = fg
   [ -f "$TERMCOLORS" ] || return 0
-  cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
+  backup_colors
   if grep -q '^background=' "$TERMCOLORS"; then
     sed -i "s|^background=.*|background=$1|" "$TERMCOLORS"
   else
@@ -214,8 +291,18 @@ if [ "$STATUS_ONLY" -eq 1 ]; then
   if [ "$DO_TERMUX" = "1" ]; then
     if [ -n "$TERM_WANT_BG" ]; then
       echo "termux: $TERMCOLORS background $TERM_BG (want: $TERM_WANT_BG)"
+      echo "termux: $TERMCOLORS foreground $TERM_FG (want: $TERM_WANT_FG)"
     else
       echo "termux: skipped (missing file or --system)"
+    fi
+    if [ -n "$PAL_SRC" ] && [ -f "$PAL_SRC" ]; then
+      if [ "$PAL_NEED" = "1" ]; then
+        echo "termux: palette $PAL_DRIFT (from $PAL_SRC)"
+      else
+        echo "termux: palette matches $PAL_SRC"
+      fi
+    else
+      echo "termux: palette off (missing $PAL_SRC, or --no-palette)"
     fi
     if [ -n "$TERM_WANT_NIGHT" ]; then
       echo "termux: $TERMPROPS night-mode $PROP_NIGHT (want: $TERM_WANT_NIGHT)"
@@ -229,7 +316,7 @@ fi
 NEED_OPENCODE=0
 [ "$CURRENT" != "$WANT" ] && NEED_OPENCODE=1
 
-if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ] && [ "$NIGHT_NEED" -eq 0 ]; then
+if [ "$NEED_OPENCODE" -eq 0 ] && [ "$TERM_NEED" -eq 0 ] && [ "$NIGHT_NEED" -eq 0 ] && [ "$PAL_NEED" -eq 0 ]; then
   echo "theme-sync: already $WANT ($NAME)"
   [ "$DO_TERMUX" = "1" ] && [ -n "$TERM_WANT_BG" ] && echo "theme-sync: termux background already $TERM_BG — nothing to do."
   exit 0
@@ -238,7 +325,9 @@ fi
 if [ "$CHECK" -eq 1 ]; then
   [ "$NEED_OPENCODE" -eq 1 ] && echo "theme-sync: would set mode $CURRENT -> $WANT ($NAME, light window $LIGHT_START-$LIGHT_END)."
   # shellcheck disable=SC2034
-  if [ "$TERM_NEED" -eq 1 ]; then echo "theme-sync: would set termux background $TERM_BG -> $TERM_WANT_BG."; fi
+  if [ "$TERM_NEED" -eq 1 ]; then echo "theme-sync: would set termux background $TERM_BG -> $TERM_WANT_BG, foreground $TERM_FG -> $TERM_WANT_FG."; fi
+  # shellcheck disable=SC2034
+  if [ "$PAL_NEED" -eq 1 ]; then echo "theme-sync: would set termux palette:$PAL_DRIFT (from $PAL_SRC)."; fi
   if [ "$NIGHT_NEED" -eq 1 ]; then echo "theme-sync: would set termux night-mode $PROP_NIGHT -> $TERM_WANT_NIGHT."; fi
   exit 2
 fi
@@ -265,6 +354,10 @@ print(f"theme-sync: mode {want} written to {path} (backup: {path}.bak-theme-sync
 PY
 fi
 
+if [ "$PAL_NEED" -eq 1 ]; then
+  apply_palette
+fi
+
 if [ "$TERM_NEED" -eq 1 ]; then
   apply_termux "$TERM_WANT_BG" "$TERM_WANT_FG"
 fi
@@ -273,7 +366,7 @@ if [ "$NIGHT_NEED" -eq 1 ]; then
   apply_nightmode "$TERM_WANT_NIGHT"
 fi
 
-if [ "$TERM_NEED" -eq 1 ] || [ "$NIGHT_NEED" -eq 1 ]; then
+if [ "$TERM_NEED" -eq 1 ] || [ "$NIGHT_NEED" -eq 1 ] || [ "$PAL_NEED" -eq 1 ]; then
   if command -v termux-reload-settings >/dev/null 2>&1; then
     termux-reload-settings 2>/dev/null || true
   fi
