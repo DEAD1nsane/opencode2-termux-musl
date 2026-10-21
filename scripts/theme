@@ -1,0 +1,87 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# theme — manual light/dark control for OpenCode + Termux on Termux.
+#
+# Why this exists: scripts/theme-sync.sh registers an Android job
+# (id 7803, every 15 min) that rewrites cli.json theme.mode on a 07:00-19:00
+# clock. That job wins over anything set by hand in the TUI: switch to light,
+# wait 15 minutes, the scheduler puts you back in dark. "theme light|dark"
+# cancels the job first, so a manual choice sticks. "theme auto" puts it back.
+#
+# Usage:
+#   theme light   force light (opencode light theme + white Termux background)
+#   theme dark    force dark
+#   theme auto    restore the time-based auto scheduler (light 07:00-19:00)
+#   theme status  what is set right now
+#
+# After a light/dark switch: restart the TUI (cli.json is read at startup, or
+# use /themes inside it for an instant flip) AND force-stop + reopen the
+# Termux app (night-mode is only read at app start).
+#
+# Symlinked to ~/bin/theme.
+
+set -e
+
+SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
+SYNC="$SELF_DIR/theme-sync.sh"
+[ -f "$SYNC" ] || SYNC="$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
+[ -f "$SYNC" ] || { echo "theme: theme-sync.sh not found" >&2; exit 1; }
+
+JOB_ID=7803
+JOB_PERIOD=900000
+
+job_active() {
+  termux-job-scheduler --pending 2>/dev/null | grep -q "Pending Job $JOB_ID:"
+}
+
+cancel_job() {
+  if job_active; then
+    # NOTE: this Termux:API build wants "--job-id N --cancel".
+    # "--cancel N" fails with "too many arguments" and silently leaves the job
+    # running - which is exactly the bug that makes the theme flip back.
+    termux-job-scheduler --job-id "$JOB_ID" --cancel >/dev/null 2>&1 || true
+    if job_active; then
+      echo "theme: WARNING - job $JOB_ID still active, manual mode will be clobbered" >&2
+      return 1
+    fi
+    echo "theme: auto-scheduler job $JOB_ID cancelled (manual mode now wins)"
+  else
+    echo "theme: auto-scheduler job $JOB_ID already inactive"
+  fi
+}
+
+register_job() {
+  if job_active; then
+    echo "theme: auto-scheduler job $JOB_ID already registered"
+    return 0
+  fi
+  termux-job-scheduler --job-id "$JOB_ID" --period-ms "$JOB_PERIOD" \
+    --persisted true -s "$SYNC" >/dev/null 2>&1 || {
+    echo "theme: failed to register job $JOB_ID" >&2
+    return 1
+  }
+  echo "theme: auto-scheduler job $JOB_ID registered (every 15 min)"
+}
+
+case "${1:-status}" in
+  light|dark)
+    cancel_job
+    sh "$SYNC" "--$1"
+    ;;
+  auto)
+    register_job
+    sh "$SYNC"
+    ;;
+  status)
+    sh "$SYNC" --status
+    if job_active; then
+      echo "theme: auto-scheduler job $JOB_ID ACTIVE - it overrides manual mode every 15 min"
+    else
+      echo "theme: auto-scheduler job $JOB_ID inactive - manual mode sticks"
+      echo "theme: (the 'want:' line above is the clock-based auto value, ignored while manual)"
+    fi
+    ;;
+  *)
+    sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
+    exit 1
+    ;;
+esac
