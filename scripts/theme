@@ -14,7 +14,8 @@
 #   theme termux light only the Termux terminal palette (opencode theme untouched)
 #   theme termux dark  only the Termux terminal palette (opencode theme untouched)
 #   theme auto         restore the time-based auto scheduler (light 07:00-19:00)
-#   theme status       what is set right now
+#   theme status       one-glance summary
+#   theme status -v    verbose (full palette diff)
 #
 # After a light/dark switch: restart the TUI (cli.json is read at startup, or
 # use /themes inside it for an instant flip) AND force-stop + reopen the
@@ -69,6 +70,7 @@ TERMCOLORS="$HOME/.termux/colors.properties"
 TERMPROPS="$HOME/.termux/termux.properties"
 PAL_LIGHT="$HOME/.termux/colors-light.properties"
 PAL_DARK="$HOME/.termux/colors-dark.properties"
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/cli.json"
 
 # termux_palette <light|dark> — flip ONLY the terminal palette + night-mode.
 # Leaves cli.json (the opencode theme) completely alone.
@@ -117,12 +119,22 @@ case "${1:-help}" in
     sh "$SYNC"
     ;;
   status)
-    sh "$SYNC" --status
+    case "${2:-}" in
+      -v|--verbose) sh "$SYNC" --status ;;
+    esac
+    cfg_theme="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("theme",{}).get("name","?"))' "$CFG" 2>/dev/null || echo "?")"
+    cfg_mode="$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1])).get("theme",{}).get("mode","?"))' "$CFG" 2>/dev/null || echo "?")"
+    t_bg="$(sed -n 's/^background=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
+    t_fg="$(sed -n 's/^foreground=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
+    t_cur="$(sed -n 's/^cursor=//p' "$TERMCOLORS" 2>/dev/null | head -1)"
+    t_night="$(sed -n 's/^[[:space:]]*night-mode[[:space:]]*=[[:space:]]*//p' "$TERMPROPS" 2>/dev/null | tail -1 | tr -d '[:space:]')"
+    printf 'opencode  : %s (%s)\n' "$cfg_theme" "$cfg_mode"
+    printf 'termux    : bg %s  fg %s  cursor %s\n' "$t_bg" "$t_fg" "$t_cur"
+    printf 'night-mode: %s\n' "${t_night:-unset}"
     if job_active; then
-      echo "theme: auto-scheduler job $JOB_ID ACTIVE - it overrides manual mode every 15 min"
+      printf 'scheduler : ON  (auto 07:00-19:00, overrides manual mode)\n'
     else
-      echo "theme: auto-scheduler job $JOB_ID inactive - manual mode sticks"
-      echo "theme: (the 'want:' line above is the clock-based auto value, ignored while manual)"
+      printf 'scheduler : off (manual mode sticks)\n'
     fi
     ;;
   help|-h|--help)
