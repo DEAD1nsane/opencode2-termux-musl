@@ -86,6 +86,25 @@ Node/c-ares on musl does raw UDP DNS, which Android blocks; `libresolvefix.so` (
 
 The proxy adds ~100–200 ms per request — acceptable for interactive use. Local endpoints (MCP servers on localhost, Ollama) bypass it via `NO_PROXY`.
 
+### Proxy resource bounds
+
+`scripts/proxy.py` is a thread-per-connection proxy, so it is deliberately bounded — on Android an unbounded proxy runs out of address space and is killed by the kernel, which surfaces as constant `Unable to connect` / `ConnectionRefused` errors:
+
+| Setting | Default | Why |
+| --- | --- | --- |
+| `PROXY_MAX_CONNECTIONS` | 256 | Above this the proxy answers `503` instead of spawning a thread that cannot start |
+| `PROXY_IDLE_TIMEOUT` | 120 s | Bounds how long a handler thread waits for the next request on an idle keep-alive socket |
+| `PROXY_TUNNEL_IDLE_TIMEOUT` | 300 s | Idle timeout for a `CONNECT` tunnel (SSE streams can be silent for minutes) |
+| `PROXY_THREAD_STACK` | 524288 | Thread stack bytes — Python's 8 MB default is gigabytes of `VmSize` at a few hundred connections |
+| `PROXY_REQUEST_QUEUE` | 128 | Listen backlog; the default of 5 overflows under load and makes the watchdog kill a healthy proxy |
+
+Two implementation details that matter on this platform:
+
+- the proxy's own outbound requests must **not** use `HTTP_PROXY`/`HTTPS_PROXY` — it inherits them from the wrapper, so its opener is built with an empty `ProxyHandler` to avoid routing through itself;
+- `CONNECT` tunnels use `select.poll()`, not `select.select()` — `select()` raises `filedescriptor out of range in select()` past `FD_SETSIZE` (1024) descriptors, which kills every tunnel at once.
+
+If the proxy dies, the watchdog restarts it within 60 s; `logcat` shows the native abort as `shadow stack read-write mprotect(...) failed: Out of memory` with `Cmdline: .../proxy.py`.
+
 ## Standalone vs shared service
 
 `--standalone` is a per-command flag in v2 (run/serve/web/acp), not a global mode:
