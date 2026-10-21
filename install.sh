@@ -310,6 +310,24 @@ elif [ -f "$SCRIPT_DIR/proxy.py" ]; then
   install -m 644 "$SCRIPT_DIR/proxy.py" "$PREFIX/libexec/opencode/proxy.py"
 fi
 
+# Theme helper: `theme light|dark|auto|status` flips the OpenCode theme and
+# the Termux terminal palette together. It needs theme-sync.sh next to itself,
+# so both land in libexec/opencode/ and only the entry point is symlinked into
+# bin/ (the scripts stay out of $PREFIX/libexec's public surface).
+if [ -f "$SCRIPT_DIR/scripts/theme" ] && [ -f "$SCRIPT_DIR/scripts/theme-sync.sh" ]; then
+  install -m 700 "$SCRIPT_DIR/scripts/theme-sync.sh" "$PREFIX/libexec/opencode/theme-sync.sh"
+  install -m 700 "$SCRIPT_DIR/scripts/theme" "$PREFIX/libexec/opencode/theme"
+  rm -f "$PREFIX/bin/theme"
+  ln -s "$PREFIX/libexec/opencode/theme" "$PREFIX/bin/theme"
+  log "Installed theme helper -> $PREFIX/bin/theme"
+elif [ -f "$SCRIPT_DIR/theme" ] && [ -f "$SCRIPT_DIR/theme-sync.sh" ]; then
+  install -m 700 "$SCRIPT_DIR/theme-sync.sh" "$PREFIX/libexec/opencode/theme-sync.sh"
+  install -m 700 "$SCRIPT_DIR/theme" "$PREFIX/libexec/opencode/theme"
+  rm -f "$PREFIX/bin/theme"
+  ln -s "$PREFIX/libexec/opencode/theme" "$PREFIX/bin/theme"
+  log "Installed theme helper -> $PREFIX/bin/theme"
+fi
+
 # --- Wrapper ---
 # v2 is Node.js-based. Outbound HTTPS still goes through the Python proxy on
 # 127.0.0.1:8080 because Node/c-ares bypasses libresolvefix (raw UDP DNS is

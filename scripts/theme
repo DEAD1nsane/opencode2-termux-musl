@@ -28,8 +28,22 @@
 
 set -e
 
-SELF_DIR="$(cd "$(dirname "$0")" && pwd)"
+# Resolve through symlinks: this script is reached both as ~/bin/theme ->
+# <repo>/scripts/theme and as $PREFIX/bin/theme -> $PREFIX/libexec/opencode/theme,
+# and dirname $0 would otherwise point at the symlink's directory, not the
+# directory holding theme-sync.sh.
+SELF="$0"
+while [ -L "$SELF" ]; do
+  link="$(readlink "$SELF")"
+  case "$link" in
+    /*) SELF="$link" ;;
+    *) SELF="$(dirname "$SELF")/$link" ;;
+  esac
+done
+SELF_DIR="$(cd "$(dirname "$SELF")" && pwd)"
+
 SYNC="$SELF_DIR/theme-sync.sh"
+[ -f "$SYNC" ] || SYNC="/data/data/com.termux/files/usr/libexec/opencode/theme-sync.sh"
 [ -f "$SYNC" ] || SYNC="$HOME/GitHub/opencode2-termux-musl/scripts/theme-sync.sh"
 
 TERMCOLORS="$HOME/.termux/colors.properties"
@@ -42,6 +56,10 @@ JOB_ID=7803
 JOB_PERIOD=900000
 LIGHT_START="${THEME_SYNC_LIGHT_START:-07:00}"
 LIGHT_END="${THEME_SYNC_LIGHT_END:-19:00}"
+LIGHT_BG="${THEME_SYNC_LIGHT_BG:-#ffffff}"
+LIGHT_FG="${THEME_SYNC_LIGHT_FG:-#000000}"
+DARK_BG="${THEME_SYNC_DARK_BG:-#000000}"
+DARK_FG="${THEME_SYNC_DARK_FG:-#ffffff}"
 
 job_active() {
   termux-job-scheduler --pending 2>/dev/null | grep -q "Pending Job $JOB_ID:"
@@ -84,13 +102,26 @@ PY
 
 apply_palette() { # $1 = light|dark ; quiet, no output
   mode="$1"
-  if [ "$mode" = "light" ]; then src="$PAL_LIGHT"; night="false"; else src="$PAL_DARK"; night="true"; fi
-  [ -f "$src" ] || { echo "theme: missing palette $src" >&2; return 1; }
+  if [ "$mode" = "light" ]; then src="$PAL_LIGHT"; night="false"; bg="$LIGHT_BG"; fg="$LIGHT_FG"
+  else src="$PAL_DARK"; night="true"; bg="$DARK_BG"; fg="$DARK_FG"; fi
   [ -f "$TERMCOLORS" ] || { echo "theme: missing $TERMCOLORS" >&2; return 1; }
   cp "$TERMCOLORS" "$TERMCOLORS.bak-theme-sync"
-  for key in background foreground cursor color0 color1 color2 color3 color4 color5 \
-             color6 color7 color8 color9 color10 color11 color12 color13 color14 color15; do
-    want="$(sed -n "s/^${key}=//p" "$src" | head -1 | tr -d '[:space:]')"
+  keys="background foreground cursor color0 color1 color2 color3 color4 color5 color6 color7 color8 color9 color10 color11 color12 color13 color14 color15"
+  if [ ! -f "$src" ]; then
+    # No palette file (fresh install): background/foreground only, like
+    # theme-sync.sh's documented fallback. The ANSI colours stay as they are.
+    keys="background foreground"
+    echo "theme: no palette file $src - background/foreground only" >&2
+  fi
+  for key in $keys; do
+    if [ -f "$src" ]; then
+      want="$(sed -n "s/^${key}=//p" "$src" | head -1 | tr -d '[:space:]')"
+    else
+      case "$key" in
+        background) want="$bg" ;;
+        foreground) want="$fg" ;;
+      esac
+    fi
     [ -n "$want" ] || continue
     if grep -q "^${key}=" "$TERMCOLORS"; then
       sed -i "s|^${key}=.*|${key}=${want}|" "$TERMCOLORS"

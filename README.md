@@ -138,6 +138,26 @@ sh scripts/theme-sync.sh --dark         # force dark
 
 Unattended (both optional, pick either): job 7803 every 15min, and/or a `precmd` hook in `~/.zshrc` for flips within seconds while the shell is active (see `docs/INSTALL.md` Theme day/night section). Takes effect on next TUI launch; Termux colors apply immediately but `night-mode` needs force-stop + reopen. Requires only `python3`.
 
+### Manual light/dark (`theme`)
+
+`scripts/theme` is the manual counterpart to the scheduler. `install.sh` puts it at `$PREFIX/bin/theme`; from a clone, symlink it instead so edits take effect immediately:
+
+```sh
+ln -s "$PWD/scripts/theme" ~/bin/theme
+```
+
+```sh
+theme light          # force light: opencode theme + white Termux background
+theme dark           # force dark
+theme termux light   # only the Termux terminal background, opencode theme untouched
+theme auto           # hand control back to the 07:00-19:00 scheduler
+theme status         # one-glance summary
+```
+
+`theme light|dark` cancels the 15-minute scheduler job first — otherwise the next tick puts you back in dark. `theme termux light` is the one to use before a screenshot: it flips the terminal background only, so the TUI cannot re-resolve the theme against a black background and write `dark` back into `cli.json`.
+
+The full ANSI palette swap needs `~/.termux/colors-light.properties` and `~/.termux/colors-dark.properties`; without them it falls back to background/foreground only.
+
 ## Formatter on Termux
 
 The built-in prettier formatter cannot spawn on Termux: its `.bin/prettier` uses a `#!/usr/bin/env node` shebang, `/usr/bin/env` does not exist on Android, and the musl wrapper's `LD_PRELOAD` swap prevents `termux-exec` from rewriting it. Format attempts fail with `NotFound: ChildProcess.spawn` and are silently skipped.
