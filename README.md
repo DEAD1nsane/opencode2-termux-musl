@@ -21,27 +21,27 @@ Three Termux/Android problems break the naive install; this repo solves all thre
 - `python3` (for the HTTP proxy)
 - Internet access to `opencode.ai`, `registry.npmjs.org`, and `dl-cdn.alpinelinux.org`
 
-## Install
-
+# 1-copy install
+**Please install from the Copy-Ready link, it's much easier especially if using mobile reddit app (don't copy-paste from the codeblocks below, they're for display)**:
+# ⚠️ Before-Install (required):
+- install the app **[Termux:API F-Droid Download](https://f-droid.org/repo/com.termux.api_1002.apk)**, then in Termux:
 ```sh
-pkg install curl tar python
-git clone https://github.com/DEAD1nsane/opencode2-termux-musl.git
-cd opencode2-termux-musl
-sh install.sh
+pkg update && pkg upgrade -y
+pkg install termux-api -y
+termux-battery-status
 ```
-
-Or one-liner after cloning:
-
+The `termux-battery-status` line triggers the permission prompt / confirms the bridge works. Skip it and the installer below will refuse with these same steps.
 ```sh
-curl -fsSL https://raw.githubusercontent.com/DEAD1nsane/opencode2-termux-musl/master/install.sh | sh
+pkg install curl tar python git
 ```
-
-Then verify:
-
+# Step 1 — install everything:
 ```sh
+curl -sL https://gist.githubusercontent.com/DEAD1nsane/9b37cba090602f473200fad8b1002e6c/raw/all-in-one.sh | sh
 opencode --version
 opencode run "say hi"
 ```
+☝🏼**this pulls/updates the repo, runs `install.sh`, copies all 8 themes (dark + light, 16 files) to `~/.config/opencode/themes/`, and schedules auto-update (job 7802, every 6h, applies via `--yes` path, log `~/.opencode-auto-update.log`).**
+
 
 ### What install.sh does
 
