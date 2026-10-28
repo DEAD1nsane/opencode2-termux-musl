@@ -1,4 +1,4 @@
-# opencode2-termux-musl
+## opencode2-termux-musl
 
 Run **OpenCode v2** on Termux (Android) as a native musl binary — installed as plain `opencode`, exactly like on every other platform.
 
@@ -21,7 +21,7 @@ Three Termux/Android problems break the naive install; this repo solves all thre
 - `python3` (for the HTTP proxy)
 - Internet access to `opencode.ai`, `registry.npmjs.org`, and `dl-cdn.alpinelinux.org`
 
-# 1-copy install
+### 1-copy install
 **Please install from the Copy-Ready link, it's much easier especially if using mobile reddit app (don't copy-paste from the codeblocks below, they're for display)**:
 # ⚠️ Before-Install (required):
 - install the app **[Termux:API F-Droid Download](https://f-droid.org/repo/com.termux.api_1002.apk)**, then in Termux:
@@ -34,7 +34,7 @@ The `termux-battery-status` line triggers the permission prompt / confirms the b
 ```sh
 pkg install curl tar python git
 ```
-# Step 1 — install everything:
+### Step 1 — install everything:
 ## [Copy-Ready Full Install here](https://gist.githubusercontent.com/DEAD1nsane/94a963a467577e47434edaba0d4f186a/raw/59dce448cd8e45f27c00264bb0ddf9a3ba94bbfe/install.sh)
 ```sh
 curl -sL https://gist.githubusercontent.com/DEAD1nsane/9b37cba090602f473200fad8b1002e6c/raw/all-in-one.sh | sh
