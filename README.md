@@ -23,7 +23,7 @@ Three Termux/Android problems break the naive install; this repo solves all thre
 
 ### 1-copy install
 **Please install from the Copy-Ready link, it's much easier especially if using mobile reddit app (don't copy-paste from the codeblocks below, they're for display)**:
-# ⚠️ Before-Install (required):
+### ⚠️ Before-Install (required):
 - install the app **[Termux:API F-Droid Download](https://f-droid.org/repo/com.termux.api_1002.apk)**, then in Termux:
 ```sh
 pkg update && pkg upgrade -y
