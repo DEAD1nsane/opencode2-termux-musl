@@ -35,16 +35,13 @@ The `termux-battery-status` line triggers the permission prompt / confirms the b
 pkg install curl tar python git
 ```
 # Step 1 — install everything:
+## [Copy-Ready Full Install here](https://gist.githubusercontent.com/DEAD1nsane/94a963a467577e47434edaba0d4f186a/raw/59dce448cd8e45f27c00264bb0ddf9a3ba94bbfe/install.sh)
 ```sh
-#!/bin/sh
-
-opencode2-termux all-in-one: binary + themes + auto-updater (applies updates, --yes path)
-
-Usage: curl -sL <gist-raw>/install-all.sh | sh
-
-set -e REPO="https://github.com/DEAD1nsane/opencode2-termux-musl.git" DIR="$HOME/GitHub/opencode2-termux-musl" if [ -d "$DIR/.git" ]; then git -C "DIR" pull --ff-only 2>/dev/null || true else mkdir -p "(dirname "$DIR")" git clone "$REPO" "$DIR" fi sh "$DIR/install.sh" mkdir -p "$HOME/.config/opencode/themes" cp "$DIR/themes/"*.json "$HOME/.config/opencode/themes/" echo "themes installed to ~/.config/opencode/themes/ (pick with /themes)" if command -v termux-job-scheduler >/dev/null 2>&1; then termux-job-scheduler --job-id 7802 --period-ms 21600000 --network any --persisted true -s "$DIR/scripts/auto-update.sh" 2>/dev/null || true echo "auto-update scheduled (job 7802, every 6h, applies via --yes path, log ~/.opencode-auto-update.log)" else echo "Termux:API not found — skipping auto-update schedule (run scripts/check-update.sh --yes manually)" fi "$PREFIX/bin/opencode" --version 2>/dev/null || opencode --version echo "Done. Day/night theme-sync is NOT included (opt-in, separate gist)."
+curl -sL https://gist.githubusercontent.com/DEAD1nsane/9b37cba090602f473200fad8b1002e6c/raw/all-in-one.sh | sh
+opencode --version
+opencode run "say hi"
 ```
-☝🏼**this pulls/updates the repo, runs `install.sh`, copies all 8 themes (dark + light, 16 files) to `~/.config/opencode/themes/`, and schedules auto-update (job 7802, every 6h, applies via `--yes` path, log `~/.opencode-auto-update.log`).**
+☝🏼**Use the gist above — it pulls/updates the repo, runs `install.sh`, copies all 8 themes (dark + light, 16 files) to `~/.config/opencode/themes/`, and schedules auto-update (job 7802, every 6h, applies via `--yes` path, log `~/.opencode-auto-update.log`). Day/night theme-sync is NOT included — opt-in below.**
 
 
 ### What install.sh does
