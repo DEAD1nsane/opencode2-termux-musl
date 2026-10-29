@@ -137,6 +137,28 @@ Then pick one with `/themes` inside OpenCode. The seven accent themes are delibe
 | 7   | [`7-pbw-amoled`](themes/7-pbw-amoled.json)         | Pink `#FF60F8`    | <a href="docs/screenshots/themes/7-pbw-amoled.png"><img src="docs/screenshots/themes/7-pbw-amoled.png" width="300" alt="7-pbw-amoled theme preview"></a>             | <a href="docs/screenshots/themes/7-pbw-amoled-light.png"><img src="docs/screenshots/themes/7-pbw-amoled-light.png" width="300" alt="7-pbw-amoled light preview"></a>             |
 | 8   | [`8-rainbow-amoled`](themes/8-rainbow-amoled.json) | Full neon (multi) | <a href="docs/screenshots/themes/8-rainbow-amoled.png"><img src="docs/screenshots/themes/8-rainbow-amoled.png" width="300" alt="8-rainbow-amoled theme preview"></a> | <a href="docs/screenshots/themes/8-rainbow-amoled-light.png"><img src="docs/screenshots/themes/8-rainbow-amoled-light.png" width="300" alt="8-rainbow-amoled light preview"></a> |
 
+### Manual light/dark (`theme`)
+
+`theme` is the user-facing command: `install.sh` puts it at `$PREFIX/bin/theme`, so after install it works from anywhere — run it with no arguments and it prints this same usage list. From a clone without installing, symlink it instead so edits take effect immediately:
+
+```sh
+ln -s "$PWD/scripts/theme" ~/bin/theme
+```
+
+```sh
+theme                # print this usage list
+theme light          # force light: opencode theme + white Termux background
+theme dark           # force dark
+theme termux light   # only the Termux terminal background, opencode theme untouched
+theme termux dark    # same, back to black
+theme auto           # hand control back to the 07:00-19:00 scheduler
+theme status         # one-glance summary (theme status -v for the full report)
+```
+
+`theme light|dark` cancels the 15-minute scheduler job (7803) first — otherwise the next tick puts you back in dark. Do **not** force a mode with `sh scripts/theme-sync.sh --light|--dark` directly: it skips that cancel, so the scheduler overwrites you within 15 minutes. Cancelling the job is the only thing the wrapper adds — all the applying logic (cli.json mode, Termux palette, background/foreground, night-mode) stays in `theme-sync.sh`. `theme termux light` is the one to use before a screenshot: it flips the terminal background only, so the TUI cannot re-resolve the theme against a black background and write `dark` back into `cli.json`.
+
+The full ANSI palette swap needs `~/.termux/colors-light.properties` and `~/.termux/colors-dark.properties`; without them it falls back to background/foreground only.
+
 ### Light/dark auto-switch (optional)
 
 `theme.mode: system` follows the terminal background (OSC 11), not Android day/night, so on Termux it never auto-switches. `scripts/theme-sync.sh` does time-based switching instead: light 07:00-19:00, dark otherwise. Theme name is preserved, only `mode` is rewritten.
@@ -148,40 +170,22 @@ What it flips together at 07:00 / 19:00:
 - Termux `~/.termux/termux.properties` `night-mode` false by day / true by night (extra-keys bar + drawer follow this)
 - the full 16-colour ANSI palette, copied from `~/.termux/colors-light.properties` (day) and `~/.termux/colors-dark.properties` (night) — the dark palette's yellow is 1.07:1 and its white slots 1.00:1 on a white background, i.e. invisible
 
+`theme-sync.sh` is the engine `theme` wraps; the commands below assume you are inside the repo directory (after `install.sh` the same file is at `$PREFIX/libexec/opencode/theme-sync.sh`, and `theme auto` registers the job for you):
+
 ```sh
+sh scripts/theme-sync.sh                # apply now, based on current time
 sh scripts/theme-sync.sh --status       # show current vs computed mode
-sh scripts/theme-sync.sh                # apply now
+sh scripts/theme-sync.sh --check        # print what would change, change nothing
 sh scripts/theme-sync.sh --light-start=06:30 --light-end=18:30  # custom window
+sh scripts/theme-sync.sh --system       # restore mode "system" (Termux left alone)
 sh scripts/theme-sync.sh --no-termux    # opencode mode only
 sh scripts/theme-sync.sh --no-opencode  # Termux colors only, leave cli.json alone
 sh scripts/theme-sync.sh --no-palette   # background/foreground only, keep the ANSI colours
-sh scripts/theme-sync.sh --light        # force light
-sh scripts/theme-sync.sh --dark         # force dark
 ```
 
 `colors-light.properties` and `colors-dark.properties` are the source of truth — edit those, not `colors.properties`, which the next run overwrites. Override the palette paths with `THEME_SYNC_PALETTE_LIGHT` / `THEME_SYNC_PALETTE_DARK`, or set `THEME_SYNC_PALETTE=0` to skip the swap entirely.
 
 Unattended (both optional, pick either): job 7803 every 15min, and/or a `precmd` hook in `~/.zshrc` for flips within seconds while the shell is active (see `docs/INSTALL.md` Theme day/night section). Takes effect on next TUI launch; Termux colors apply immediately but `night-mode` needs force-stop + reopen. Requires only `python3`.
-
-### Manual light/dark (`theme`)
-
-`scripts/theme` is the manual counterpart to the scheduler — a thin wrapper that adds scheduler control and a quiet one-line summary, while all the applying logic stays in `theme-sync.sh`. `install.sh` puts it at `$PREFIX/bin/theme`; from a clone, symlink it instead so edits take effect immediately:
-
-```sh
-ln -s "$PWD/scripts/theme" ~/bin/theme
-```
-
-```sh
-theme light          # force light: opencode theme + white Termux background
-theme dark           # force dark
-theme termux light   # only the Termux terminal background, opencode theme untouched
-theme auto           # hand control back to the 07:00-19:00 scheduler
-theme status         # one-glance summary
-```
-
-`theme light|dark` cancels the 15-minute scheduler job first — otherwise the next tick puts you back in dark. `theme termux light` is the one to use before a screenshot: it flips the terminal background only, so the TUI cannot re-resolve the theme against a black background and write `dark` back into `cli.json`.
-
-The full ANSI palette swap needs `~/.termux/colors-light.properties` and `~/.termux/colors-dark.properties`; without them it falls back to background/foreground only.
 
 ## Formatter on Termux
 
